@@ -8,7 +8,7 @@ The **Lightweight HTTPServer** is an application server building without framewo
 1. **Lightweight HTTPServer** is a Java application developed with JDK 1.8
 2. **Lightweight HTTPServer** is built using Gradle. Configuration file is `build.gradle` at root folder
 3. Source code is in Git repository 
- To clone execute `git clone --branch master https://github.com/jruizro/` into a local folder
+ To clone execute `git clone --branch master https://github.com/jruizro/test-web-application.git` into a local folder
 4. Run `gradle jar` will build jar with all dependencies included
     the application distribution archive can be found `/build/libs` directory
 6. Run the application from command line `java -jar /build/libs/test-web-application-1.0.jar`
