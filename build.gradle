@@ -1,0 +1,36 @@
+group 'es.httpserver.lightweightHTTPServer'
+version '1.0'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+def mainClass = 'es.httpserver.server.LightweightHTTPServer'
+
+jar {
+    baseName = 'test-web-application'
+    manifest {
+        attributes 'Implementation-Title': 'LightweightHTTPServer',
+                'Implementation-Version': version,
+                'Main-Class': mainClass
+    }
+    doFirst {
+        from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
+    }
+}
+
+processResources {
+    from('src/main/java/web') {
+        into 'web'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'javax.json', name: 'javax.json-api', version: '1.1'
+    compile 'org.glassfish:javax.json:1.1'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
