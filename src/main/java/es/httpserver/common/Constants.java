@@ -47,6 +47,15 @@ public class Constants {
 
     public static final String PAGE_PARAM = "pag";
 
-    public static final long SESSION_TIMEOUT = 30000; // 300000; // 5 minutos en milisegundos
+    public static final String SERVER_CONFIG_FILE = "serverconfig";
+    public static final String USERS_CONFIG_FILE = "users";
+
+    public static final String PROPERTY_SESSION_TIMEOUT = "http.session.timeout";
+    public static final String PROPERTY_USERS_LIST = "users.names.list";
+    public static final String PROPERTY_USER_PASS = ".pass";
+    public static final String PROPERTY_USER_ROLE = ".role";
+
+
+
 
 }

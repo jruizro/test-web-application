@@ -1,5 +1,6 @@
 package es.httpserver.controllers;
 
+import es.httpserver.common.Constants;
 import es.httpserver.model.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,18 +32,18 @@ public class UsersDataController {
 
         try {
 
-            ResourceBundle usersRolesConfig = ResourceBundle.getBundle("users");
-            logger.debug("Cargando configuración de Usuarios-Roles desde " + "users" + ".properties");
+            ResourceBundle usersRolesConfig = ResourceBundle.getBundle(Constants.USERS_CONFIG_FILE);
+            logger.debug("Cargando configuración de Usuarios-Roles desde " + Constants.USERS_CONFIG_FILE + ".properties");
 
             if (usersRolesConfig != null) {
 
-                List<String> listaDeUsuarios = readResourceWithCommas(usersRolesConfig.getString("users.names.list"));
+                List<String> listaDeUsuarios = readResourceWithCommas(usersRolesConfig.getString(Constants.PROPERTY_USERS_LIST));
 
                 for (String nombreUsuario : listaDeUsuarios) {
                     User usuario = new User();
                     usuario.setUsername(nombreUsuario);
-                    usuario.setPassword(usersRolesConfig.getString(nombreUsuario + ".pass"));
-                    usuario.setRoles(readResourceWithCommas(usersRolesConfig.getString(nombreUsuario + ".role")));
+                    usuario.setPassword(usersRolesConfig.getString(nombreUsuario + Constants.PROPERTY_USER_PASS));
+                    usuario.setRoles(readResourceWithCommas(usersRolesConfig.getString(nombreUsuario + Constants.PROPERTY_USER_ROLE)));
                     logger.debug("Leida configuracion del usuario: " + usuario.toString());
                     listaUsuarios.put(usuario.getUsername(), usuario);
                 }

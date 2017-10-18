@@ -1,13 +1,14 @@
 package es.httpserver.controllers;
 
 import es.httpserver.common.Constants;
-import es.httpserver.model.WebSession;
 import es.httpserver.model.User;
+import es.httpserver.model.WebSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by User: admin
@@ -20,6 +21,7 @@ public class SessionController {
 
     private static SessionController instance = null;
 
+    private int sessionTimeout = 300000; // por defecto 5 minutos
     private Map<String, WebSession> sessionsList = null;
 
     public static SessionController getInstance() {
@@ -32,6 +34,18 @@ public class SessionController {
     private SessionController() {
         sessionsList = new HashMap<>();
         logger.debug("Session controller started with " + sessionsList.size() + " controllers");
+
+        try {
+
+            ResourceBundle serverConfig = ResourceBundle.getBundle(Constants.SERVER_CONFIG_FILE);
+            logger.debug("Cargando configuración del servidor " + Constants.SERVER_CONFIG_FILE + ".properties");
+
+            sessionTimeout = Integer.parseInt(serverConfig.getString(Constants.PROPERTY_SESSION_TIMEOUT));
+
+        } catch (Exception e) {
+            logger.error("ERROR al cargar el fichero de configuracion del Servidor: " + e.getMessage());
+            e.printStackTrace(System.out);
+        }
     }
 
     public WebSession getSessionInfo(String sessionId) {
@@ -96,7 +110,7 @@ public class SessionController {
     }
 
     public boolean isExpired(String sessionId) {
-        return sessionsList.get(sessionId).isExpired();
+        return sessionsList.get(sessionId).isExpired(sessionTimeout);
     }
 
     public boolean existSessionId(String sessionId) {

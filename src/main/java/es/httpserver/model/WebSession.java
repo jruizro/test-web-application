@@ -1,7 +1,5 @@
 package es.httpserver.model;
 
-import es.httpserver.common.Constants;
-
 /**
  * Created by User: admin
  * Date: 10/10/2017
@@ -50,8 +48,8 @@ public class WebSession {
         nextPage = null;
     }
 
-    public boolean isExpired() {
-        return (System.currentTimeMillis() - lastAction) > Constants.SESSION_TIMEOUT;
+    public boolean isExpired(int millisecondsToExpire) {
+        return (System.currentTimeMillis() - lastAction) > millisecondsToExpire;
     }
 
 
