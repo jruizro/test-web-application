@@ -122,15 +122,14 @@ public class HTTPCommonHandler implements HttpHandler {
         HashMap<String, String> listaParametrosValor = new HashMap<>();
 
         Headers requestHeaders = httpExchange.getRequestHeaders();
+
         Set<String> keyHeadersSet = requestHeaders.keySet();
-        Iterator<String> iteradorHeaders = keyHeadersSet.iterator();
-        while (iteradorHeaders.hasNext()) {
-            String headerKey = iteradorHeaders.next();
+        keyHeadersSet.forEach(headerKey -> {
             List headerKeyValues = requestHeaders.get(headerKey);
             logger.debug("HEADER: " + headerKey + " -> " + headerKeyValues.toString());
             listaParametrosValor.put(headerKey, headerKeyValues.toString());
+        });
 
-        }
         return listaParametrosValor;
     }
 
@@ -184,10 +183,11 @@ public class HTTPCommonHandler implements HttpHandler {
      * Este metodo sustituye en los ficheros HTML las variables:
      * #$USERNAME$# -> userName
      * #$ERROR$# -> errorMSG
-     *
-     * @param pathToHTMLTemplate
-     * @param userName
-     * @param errorMSG
+     * @param pathToHTMLTemplate pagina HTML a procesar
+     * @param userName nombre del usuario
+     * @param errorMSG Mensage en caso de error
+     * @return
+     * @throws IOException
      */
     protected String generateHTMLPage(String pathToHTMLTemplate, String userName, String errorMSG) throws IOException {
 

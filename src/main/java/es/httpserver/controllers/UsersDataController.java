@@ -29,35 +29,35 @@ public class UsersDataController {
 
     private UsersDataController() {
 
-        ResourceBundle usersRolesConfig = null;
-
         try {
 
-            usersRolesConfig = ResourceBundle.getBundle("users");
+            ResourceBundle usersRolesConfig = ResourceBundle.getBundle("users");
             logger.debug("Cargando configuración de Usuarios-Roles desde " + "users" + ".properties");
+
+            if (usersRolesConfig != null) {
+
+                List<String> listaDeUsuarios = readResourceWithCommas(usersRolesConfig.getString("users.names.list"));
+
+                for (String nombreUsuario : listaDeUsuarios) {
+                    User usuario = new User();
+                    usuario.setUsername(nombreUsuario);
+                    usuario.setPassword(usersRolesConfig.getString(nombreUsuario + ".pass"));
+                    usuario.setRoles(readResourceWithCommas(usersRolesConfig.getString(nombreUsuario + ".role")));
+                    logger.debug("Leida configuracion del usuario: " + usuario.toString());
+                    listaUsuarios.put(usuario.getUsername(), usuario);
+                }
+
+            } else {
+                logger.error("ERROR al cargar el fichero de configuracion de Usuarios-Roles!");
+            }
+            logger.debug("Leida configuración de " + listaUsuarios.size() + " usuarios");
 
         } catch (Exception e) {
             logger.error("ERROR al cargar el fichero de configuracion de Usuarios-Roles : " + e.getMessage());
             e.printStackTrace(System.out);
         }
 
-        if (usersRolesConfig != null) {
 
-            List<String> listaDeUsuarios = readResourceWithCommas(usersRolesConfig.getString("users.names.list"));
-            Iterator iteradorListaDeUsuarios = listaDeUsuarios.iterator();
-            while (iteradorListaDeUsuarios.hasNext()) {
-                String nombreUsuario = (String) iteradorListaDeUsuarios.next();
-                User usuario = new User();
-                usuario.setUsername(nombreUsuario);
-                usuario.setPassword(usersRolesConfig.getString(nombreUsuario + ".pass"));
-                usuario.setRoles(readResourceWithCommas(usersRolesConfig.getString(nombreUsuario + ".role")));
-                logger.debug("Leida configuracion del usuario: " + usuario.toString());
-                listaUsuarios.put(usuario.getUsername(), usuario);
-            }
-        } else {
-            logger.error("ERROR al cargar el fichero de configuracion de Usuarios-Roles!");
-        }
-        logger.debug("Leida configuración de " + listaUsuarios.size() + " usuarios");
     }
 
     public User addUser(User newUser) {
@@ -84,7 +84,7 @@ public class UsersDataController {
 
     public User getUser(String username) {
         logger.debug("Buscando info del Usuario: " + username);
-        return listaUsuarios.containsKey(username) ? listaUsuarios.get(username) : null;
+        return listaUsuarios.getOrDefault(username, null);
     }
 
     public HashMap<String, User> getUsers() {
