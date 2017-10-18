@@ -31,6 +31,7 @@ public class HTTPCommonHandler implements HttpHandler {
     private UsersDataController usersDataController;
 
     @Override public void handle(HttpExchange requestHttpExchange) throws IOException {
+
         httpExchange = requestHttpExchange;
         sessionController = SessionController.getInstance();
         usersDataController = UsersDataController.getInstance();
@@ -211,17 +212,21 @@ public class HTTPCommonHandler implements HttpHandler {
      * - HOST de origen dela peticion
      * @return sessionId
      */
-    protected String getSesionHeaderHash() {
+    protected String getSessionCookie() {
 
         String sessionId;
         if (httpExchange.getRequestHeaders().get(Constants.HEADER_COOKIE) != null) {
-            String cookieHeader = httpExchange.getRequestHeaders().get(Constants.HEADER_COOKIE).get(0);
-            sessionId = String.valueOf(cookieHeader.hashCode());
-            logger.debug("getSesionHeaderHash [" + cookieHeader + " -> " + sessionId + "]");
+            sessionId = httpExchange.getRequestHeaders().get(Constants.HEADER_COOKIE).get(0);
+            logger.debug("getSessionCookie - Readed Session [" + sessionId + "]");
         } else {
-            String hostName = httpExchange.getRemoteAddress().getHostName();
-            sessionId = String.valueOf(hostName.hashCode());
-            logger.debug("getSesionHeaderHash [" + hostName + " -> " + sessionId + "]");
+            // Si no viene una cookie -> la generamos
+            sessionId = UUID.randomUUID().toString();
+            httpExchange.getResponseHeaders().put(Constants.HEADER_SET_COOKIE, new ArrayList<String>() {
+                {
+                    add(sessionId);
+                }
+            });
+            logger.debug("getSessionCookie - Created new Session [" + sessionId + "]");
         }
 
         return sessionId;

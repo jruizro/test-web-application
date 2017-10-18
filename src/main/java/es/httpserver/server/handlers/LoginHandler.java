@@ -37,7 +37,7 @@ public class LoginHandler extends HTTPCommonHandler {
 
         if (isValidLogin) {
 
-            String sessionId = getSesionHeaderHash();
+            String sessionId = getSessionCookie();
 
             if (getSessionController().existSessionId(sessionId) && getSessionController().getSessionInfo(sessionId).getNextPage() != null) {
 
@@ -45,8 +45,14 @@ public class LoginHandler extends HTTPCommonHandler {
                 logger.debug("Usuario " + username + " pendiente de visualizar -> " + paginaSolicitada);
                 logger.debug("Login OK para el usuario " + username + " -> Se actualiza su session");
                 getSessionController().addSessionInfo(new WebSession(sessionId, getUsersDataController().getUser(username)));
-                // Si ya hay una session anonima -> Update Session & acceso a pagina Solicitada
-                sendSuccessfulResponse(generateHTMLPage(getPagePath(paginaSolicitada), username, ""));
+                // Verificamos si tras el nuevo login tiene acceso a la pagina anteriormente solicitada
+                if (getSessionController().hasAccessToPage(sessionId, paginaSolicitada)) {
+                    // Si ya hay una session anonima -> Update Session & acceso a pagina Solicitada
+                    sendSuccessfulResponse(generateHTMLPage(getPagePath(paginaSolicitada), username, ""));
+                } else {
+                    // Si de nuevo NO tiene acceso a la pagina solicitada -> Home
+                    sendSuccessfulResponse(generateHTMLPage(Constants.HOME_PAGE_PATH, username, "ERROR: No posee el rol necesario para accceder a " + paginaSolicitada));
+                }
             } else {
                 // New session y acceso al HOME
                 logger.debug("Login OK para el usuario " + username + " -> Se crea su session");

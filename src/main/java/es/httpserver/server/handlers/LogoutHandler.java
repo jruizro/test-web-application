@@ -19,7 +19,7 @@ public class LogoutHandler extends HTTPCommonHandler {
 
         logger.debug("LogoutHandler - post");
 
-        String sessionId = getSesionHeaderHash();
+        String sessionId = getSessionCookie();
 
         logger.debug("Solicitado el Logout de la session " + sessionId);
         String usuarioDeSession = getSessionController().removeSessionInfo(sessionId);

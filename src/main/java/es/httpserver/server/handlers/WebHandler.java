@@ -23,7 +23,7 @@ public class WebHandler extends HTTPCommonHandler {
         HashMap<String, String> uriParameters = getRequestUriParameters();
 
         String paginaSolicitada = uriParameters.get(Constants.PAGE_PARAM) != null ? uriParameters.get(Constants.PAGE_PARAM) : Constants.LOGIN_PAGE_PATH;
-        String sessionId = getSesionHeaderHash();
+        String sessionId = getSessionCookie();
 
         if (paginaSolicitada.equalsIgnoreCase(Constants.LOGIN_PAGE_PATH)) {
             // Para acceder a la pagina de Login no es necesario tener session
