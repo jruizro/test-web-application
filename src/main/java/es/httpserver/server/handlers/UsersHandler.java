@@ -3,6 +3,8 @@ package es.httpserver.server.handlers;
 import com.sun.net.httpserver.Headers;
 import es.httpserver.common.Constants;
 import es.httpserver.model.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,6 +17,8 @@ import java.util.List;
  */
 public class UsersHandler extends HTTPCommonHandler {
 
+    private static final Logger logger = LogManager.getLogger(UsersHandler.class.getName());
+
     /**
      * GET /users/{username} - return user info
      *
@@ -22,7 +26,7 @@ public class UsersHandler extends HTTPCommonHandler {
      */
     public void get() throws IOException {
 
-        System.out.println("UsersHandler - get -> Read User");
+        logger.debug("UsersHandler - get -> Read User");
 
         List<String> uriParameters = getRequestUriPath(Constants.USERS_CONTEXTPATH);
         User userRequested = getUsersDataController().getUser(uriParameters.get(0));
@@ -46,7 +50,7 @@ public class UsersHandler extends HTTPCommonHandler {
      */
     public void post() throws IOException {
 
-        System.out.println("UsersHandler - post -> Create User");
+        logger.debug("UsersHandler - post -> Create User");
         HashMap<String, String> bodyParameters = getRequestBodyParameters();
 
         if (bodyParameters.get("username") != null && bodyParameters.get("password") != null && bodyParameters.get("roles") != null) {
@@ -56,16 +60,16 @@ public class UsersHandler extends HTTPCommonHandler {
             newUser.setRoles(separaCamposPorComas(bodyParameters.get("roles")));
 
             if (getUsersDataController().getUser(newUser.getUsername()) != null) {
-                System.out.println("ERROR: El usuario ya existe");
+                logger.error("ERROR: El usuario ya existe");
                 sendBadRequestResponse("ERROR: El usuario ya existe");
             } else {
                 getUsersDataController().addUser(newUser);
-                System.out.println("Added new User: " + getUsersDataController().getUser(newUser.getUsername()).toString());
+                logger.debug("Added new User: " + getUsersDataController().getUser(newUser.getUsername()).toString());
                 sendRESTCreatedResponse(getUsersDataController().getUser(newUser.getUsername()));
             }
 
         } else {
-            System.out.println("ERROR: Falta parametro obligatorio");
+            logger.error("ERROR: Falta parametro obligatorio");
             sendBadRequestResponse("ERROR: Falta parametro obligatorio");
         }
     }
@@ -79,7 +83,7 @@ public class UsersHandler extends HTTPCommonHandler {
      * @throws IOException
      */
     public void put() throws IOException {
-        System.out.println("UsersHandler - update - Update User");
+        logger.debug("UsersHandler - update - Update User");
 
         List<String> uriParameters = getRequestUriPath(Constants.USERS_CONTEXTPATH);
 
@@ -92,12 +96,12 @@ public class UsersHandler extends HTTPCommonHandler {
                 User userUpdated = getUsersDataController().updateUser(userToUpdate);
                 sendRESTSuccessfulResponse(userUpdated);
             } else {
-                System.out.println("ERROR: Falta parametro obligatorio");
+                logger.error("ERROR: Falta parametro obligatorio");
                 sendBadRequestResponse("ERROR: Falta parametro obligatorio");
             }
 
         } else {
-            System.out.println("ERROR: El usuario a actualizar NO existe");
+            logger.error("ERROR: El usuario a actualizar NO existe");
             sendNotFoundResponse();
         }
 
@@ -110,7 +114,7 @@ public class UsersHandler extends HTTPCommonHandler {
      * @throws IOException
      */
     public void delete() throws IOException {
-        System.out.println("UsersHandler - delete -> Delete User");
+        logger.debug("UsersHandler - delete -> Delete User");
 
         List<String> uriParameters = getRequestUriPath(Constants.USERS_CONTEXTPATH);
         User userDeleted = getUsersDataController().deleteUser(uriParameters.get(0));
@@ -126,7 +130,7 @@ public class UsersHandler extends HTTPCommonHandler {
 
     private String generateRESTResponse(User userInfo) {
 
-        String responseBody = "";
+        String responseBody;
         Headers responseHeaders = getResponseHeaders();
         HashMap<String, String> requestHeaders = getRequestHeaders();
 

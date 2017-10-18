@@ -8,6 +8,8 @@ import es.httpserver.server.handlers.LoginHandler;
 import es.httpserver.server.handlers.LogoutHandler;
 import es.httpserver.server.handlers.UsersHandler;
 import es.httpserver.server.handlers.WebHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -20,6 +22,7 @@ import java.util.concurrent.Executors;
  */
 public class LightweightHTTPServer {
 
+    private static final Logger logger = LogManager.getLogger(LightweightHTTPServer.class.getName());
 
     private static final int DEFAULT_PORT = 8080;
     // Server Listen port
@@ -30,13 +33,13 @@ public class LightweightHTTPServer {
 
     public static void main(String[] args) throws IOException {
 
-        System.out.println("Starting LightweightHTTPServer... ");
+        logger.info("Starting LightweightHTTPServer... ");
 
         if (args.length > 0) {
             try {
                 defaultPort = Integer.parseInt(args[0]);
             } catch (NumberFormatException exception) {
-                System.out.println("Incorrect port number, using port " + DEFAULT_PORT);
+                logger.debug("Incorrect port number, using port " + DEFAULT_PORT);
             }
         }
 
@@ -59,9 +62,9 @@ public class LightweightHTTPServer {
         // Server ups!
         lightweightHTTPServer.start();
 
-        System.out.println("es.httpserver.server.LightweightHTTPServer is up! and listening on port " + defaultPort);
+        logger.debug("es.httpserver.server.LightweightHTTPServer is up! and listening on port " + defaultPort);
 
-        System.out.println("Press Ctrl-C to terminate.");
+        logger.debug("Press Ctrl-C to terminate.");
     }
 
 }

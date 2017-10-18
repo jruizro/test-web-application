@@ -6,6 +6,8 @@ import com.sun.net.httpserver.HttpHandler;
 import es.httpserver.common.Constants;
 import es.httpserver.controllers.SessionController;
 import es.httpserver.controllers.UsersDataController;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
  */
 public class HTTPCommonHandler implements HttpHandler {
 
+    private static final Logger logger = LogManager.getLogger(HTTPCommonHandler.class.getName());
+
     private HttpExchange httpExchange;
     private SessionController sessionController;
     private UsersDataController usersDataController;
@@ -32,7 +36,7 @@ public class HTTPCommonHandler implements HttpHandler {
         usersDataController = UsersDataController.getInstance();
 
         String requestMethod = httpExchange.getRequestMethod().toLowerCase();
-        System.out.println("Procesando peticion del cliente: " + httpExchange.getRemoteAddress().getHostName());
+        logger.debug("Procesando peticion del cliente: " + httpExchange.getRemoteAddress().getHostName());
 
         getRequestHeaders();
 
@@ -58,7 +62,7 @@ public class HTTPCommonHandler implements HttpHandler {
         StringTokenizer listaParamentrosGet = new StringTokenizer(queryRequestPath, "/");
         while (listaParamentrosGet.hasMoreElements()) {
             String parametroGet = listaParamentrosGet.nextToken().trim();
-            System.out.println("getQueryParameter - " + parametroGet);
+            logger.debug("getQueryParameter - " + parametroGet);
             if (!rootPath.contains(parametroGet)) {
                 getParams.add(parametroGet);
             }
@@ -89,7 +93,7 @@ public class HTTPCommonHandler implements HttpHandler {
 
         HashMap<String, String> listaParametrosValor = new HashMap<>();
 
-        System.out.println("getQueryParameters - " + allQueryParameters);
+        logger.debug("getQueryParameters - " + allQueryParameters);
 
         StringTokenizer listaTuplasClaveValor = new StringTokenizer(allQueryParameters, "&");
         while (listaTuplasClaveValor.hasMoreElements()) {
@@ -98,10 +102,10 @@ public class HTTPCommonHandler implements HttpHandler {
             try {
                 String parametro = URLDecoder.decode(arrayClaveValor[0], "UTF-8");
                 String valor = arrayClaveValor[1] != null ? URLDecoder.decode(arrayClaveValor[1], "UTF-8") : "";
-                System.out.println("Leido Parametro [" + parametro + " -> " + valor + "]");
+                logger.debug("Leido Parametro [" + parametro + " -> " + valor + "]");
                 listaParametrosValor.put(parametro, valor);
             } catch (Exception e) {
-                System.out.println("Exception: " + e.getMessage());
+                logger.debug("Exception: " + e.getMessage());
                 e.printStackTrace();
             }
 
@@ -123,7 +127,7 @@ public class HTTPCommonHandler implements HttpHandler {
         while (iteradorHeaders.hasNext()) {
             String headerKey = iteradorHeaders.next();
             List headerKeyValues = requestHeaders.get(headerKey);
-            System.out.println("HEADER: " + headerKey + " -> " + headerKeyValues.toString());
+            logger.debug("HEADER: " + headerKey + " -> " + headerKeyValues.toString());
             listaParametrosValor.put(headerKey, headerKeyValues.toString());
 
         }
@@ -187,11 +191,11 @@ public class HTTPCommonHandler implements HttpHandler {
      */
     protected String generateHTMLPage(String pathToHTMLTemplate, String userName, String errorMSG) throws IOException {
 
-        System.out.println("generateHTMLPage - " + pathToHTMLTemplate + " [" + userName + "," + errorMSG + "]");
+        logger.debug("generateHTMLPage - " + pathToHTMLTemplate + " [" + userName + "," + errorMSG + "]");
 
         InputStream template = this.getClass().getResourceAsStream(pathToHTMLTemplate);
         StringBuilder stringBuilderTemplate = new StringBuilder(new BufferedReader(new InputStreamReader(template)).lines().collect(Collectors.joining("\n")));
-        int index = -1;
+        int index;
         while ((index = stringBuilderTemplate.lastIndexOf(Constants.WEB_USERNAME_PATTERN)) != -1) {
             stringBuilderTemplate.replace(index, index + Constants.WEB_USERNAME_PATTERN.length(), userName);
         }
@@ -205,7 +209,7 @@ public class HTTPCommonHandler implements HttpHandler {
      * Genera un ID de session a partir de:
      * - HTTP Cookie Header o
      * - HOST de origen dela peticion
-     * @return
+     * @return sessionId
      */
     protected String getSesionHeaderHash() {
 
@@ -213,11 +217,11 @@ public class HTTPCommonHandler implements HttpHandler {
         if (httpExchange.getRequestHeaders().get(Constants.HEADER_COOKIE) != null) {
             String cookieHeader = httpExchange.getRequestHeaders().get(Constants.HEADER_COOKIE).get(0);
             sessionId = String.valueOf(cookieHeader.hashCode());
-            System.out.println("getSesionHeaderHash [" + cookieHeader + " -> " + sessionId + "]");
+            logger.debug("getSesionHeaderHash [" + cookieHeader + " -> " + sessionId + "]");
         } else {
             String hostName = httpExchange.getRemoteAddress().getHostName();
             sessionId = String.valueOf(hostName.hashCode());
-            System.out.println("getSesionHeaderHash [" + hostName + " -> " + sessionId + "]");
+            logger.debug("getSesionHeaderHash [" + hostName + " -> " + sessionId + "]");
         }
 
         return sessionId;
@@ -239,7 +243,7 @@ public class HTTPCommonHandler implements HttpHandler {
     }
 
     protected List<String> separaCamposPorComas(String listaConComas) {
-        List<String> listaSeparadaSinComas = new Vector<String>();
+        List<String> listaSeparadaSinComas = new Vector<>();
         StringTokenizer serviceTokenizer = new StringTokenizer(listaConComas, ",");
         while (serviceTokenizer.hasMoreElements()) {
             listaSeparadaSinComas.add(serviceTokenizer.nextToken().trim());

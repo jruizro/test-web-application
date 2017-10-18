@@ -3,6 +3,8 @@ package es.httpserver.controllers;
 import es.httpserver.common.Constants;
 import es.httpserver.model.WebSession;
 import es.httpserver.model.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +15,8 @@ import java.util.Map;
  * Time: 12:40
  */
 public class SessionController {
+
+    private static final Logger logger = LogManager.getLogger(SessionController.class.getName());
 
     private static SessionController instance = null;
 
@@ -27,7 +31,7 @@ public class SessionController {
 
     private SessionController() {
         sessionsList = new HashMap<>();
-        System.out.println("Session controller started with " + sessionsList.size() + " controllers");
+        logger.debug("Session controller started with " + sessionsList.size() + " controllers");
     }
 
     public WebSession getSessionInfo(String sessionId) {
@@ -36,14 +40,14 @@ public class SessionController {
 
     public void addSessionInfo(WebSession infoDeSesion) {
         sessionsList.put(infoDeSesion.getId(), infoDeSesion);
-        System.out.println("Almacenada la sesion '" + infoDeSesion.getId() + "' del usuario '" + infoDeSesion.getUser().getUsername() + "'");
+        logger.debug("Almacenada la sesion '" + infoDeSesion.getId() + "' del usuario '" + infoDeSesion.getUser().getUsername() + "'");
     }
 
     public void addNoLoginSessionInfo(String sessionId, String paginaSolicitada) {
         WebSession infoDeSesion = new WebSession(sessionId, new User());
         infoDeSesion.setNextPage(paginaSolicitada);
         sessionsList.put(sessionId, infoDeSesion);
-        System.out.println("Almacenada la sesion '" + infoDeSesion.getId() + "' para un usuario NO LOGADO -> " + paginaSolicitada);
+        logger.debug("Almacenada la sesion '" + infoDeSesion.getId() + "' para un usuario NO LOGADO -> " + paginaSolicitada);
     }
 
     public String removeSessionInfo(String sessionId) {
@@ -51,7 +55,7 @@ public class SessionController {
         String ususarioDeLaSession = "";
         if (sessionsList.containsKey(sessionId)) {
             ususarioDeLaSession = sessionsList.get(sessionId).getUser().getUsername();
-            System.out.println("Eliminando la sesion '" + sessionId + "' del usuario '" + ususarioDeLaSession + "'");
+            logger.debug("Eliminando la sesion '" + sessionId + "' del usuario '" + ususarioDeLaSession + "'");
             sessionsList.remove(sessionId);
         }
         return ususarioDeLaSession;
@@ -59,10 +63,10 @@ public class SessionController {
 
     public boolean hasAccessToPage(String sessionId, String paginaDestino) {
 
-        boolean tienePermiso = false;
+        boolean tienePermiso;
         WebSession userSession = sessionsList.get(sessionId);
 
-        System.out.println("Session '" + sessionId + "' solicita permiso para '" + paginaDestino + "'");
+        logger.debug("Session '" + sessionId + "' solicita permiso para '" + paginaDestino + "'");
 
         switch (paginaDestino) {
             case Constants.PAGE_1_PARAMETER:

@@ -18,7 +18,6 @@ public class WebSession {
     public WebSession(String id, User user) {
         this.id = id;
         this.user = user;
-        // System.out.println("Creada session '" + getId() + "' para el usuario " + user.getUsername());
         lastAction = System.currentTimeMillis();
     }
 
@@ -52,7 +51,6 @@ public class WebSession {
     }
 
     public boolean isExpired() {
-        // System.out.println("Session activa durante " + (System.currentTimeMillis() - lastAction) + " milliseconds");
         return (System.currentTimeMillis() - lastAction) > Constants.SESSION_TIMEOUT;
     }
 

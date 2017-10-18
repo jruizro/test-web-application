@@ -1,6 +1,8 @@
 package es.httpserver.server.handlers;
 
 import es.httpserver.common.Constants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,9 +14,11 @@ import java.util.HashMap;
  */
 public class WebHandler extends HTTPCommonHandler {
 
+    private static final Logger logger = LogManager.getLogger(WebHandler.class.getName());
+
     public void get() throws IOException {
 
-        System.out.println("WebHandler - get");
+        logger.debug("WebHandler - get");
 
         HashMap<String, String> uriParameters = getRequestUriParameters();
 

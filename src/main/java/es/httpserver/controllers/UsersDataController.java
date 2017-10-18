@@ -1,6 +1,8 @@
 package es.httpserver.controllers;
 
 import es.httpserver.model.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -10,6 +12,8 @@ import java.util.*;
  * Time: 13:11
  */
 public class UsersDataController {
+
+    private static final Logger logger = LogManager.getLogger(UsersDataController.class.getName());
 
     private static UsersDataController instance = new UsersDataController();
 
@@ -30,10 +34,10 @@ public class UsersDataController {
         try {
 
             usersRolesConfig = ResourceBundle.getBundle("users");
-            System.out.println("Cargando configuración de Usuarios-Roles desde " + "users" + ".properties");
+            logger.debug("Cargando configuración de Usuarios-Roles desde " + "users" + ".properties");
 
         } catch (Exception e) {
-            System.out.println("ERROR al cargar el fichero de configuracion de Usuarios-Roles : " + e.getMessage());
+            logger.error("ERROR al cargar el fichero de configuracion de Usuarios-Roles : " + e.getMessage());
             e.printStackTrace(System.out);
         }
 
@@ -47,13 +51,13 @@ public class UsersDataController {
                 usuario.setUsername(nombreUsuario);
                 usuario.setPassword(usersRolesConfig.getString(nombreUsuario + ".pass"));
                 usuario.setRoles(readResourceWithCommas(usersRolesConfig.getString(nombreUsuario + ".role")));
-                System.out.println("Leida configuracion del usuario: " + usuario.toString());
+                logger.debug("Leida configuracion del usuario: " + usuario.toString());
                 listaUsuarios.put(usuario.getUsername(), usuario);
             }
         } else {
-            System.out.println("ERROR al cargar el fichero de configuracion de Usuarios-Roles!");
+            logger.error("ERROR al cargar el fichero de configuracion de Usuarios-Roles!");
         }
-        System.out.println("Leida configuración de " + listaUsuarios.size() + " usuarios");
+        logger.debug("Leida configuración de " + listaUsuarios.size() + " usuarios");
     }
 
     public User addUser(User newUser) {
@@ -79,7 +83,7 @@ public class UsersDataController {
     }
 
     public User getUser(String username) {
-        System.out.println("Buscando info del Usuario: " + username);
+        logger.debug("Buscando info del Usuario: " + username);
         return listaUsuarios.containsKey(username) ? listaUsuarios.get(username) : null;
     }
 
@@ -88,12 +92,12 @@ public class UsersDataController {
     }
 
     public void deleteAllUsers() {
-        System.out.println("Se van borrar " + listaUsuarios.size() + " usuarios");
+        logger.debug("Se van borrar " + listaUsuarios.size() + " usuarios");
         listaUsuarios = new HashMap<>();
     }
 
     private List<String> readResourceWithCommas(String listaConComas) {
-        List<String> listaSeparadaSinComas = new Vector<String>();
+        List<String> listaSeparadaSinComas = new Vector<>();
         StringTokenizer serviceTokenizer = new StringTokenizer(listaConComas, ",");
         while (serviceTokenizer.hasMoreElements()) {
             listaSeparadaSinComas.add(serviceTokenizer.nextToken().trim());

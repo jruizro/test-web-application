@@ -2,6 +2,8 @@ package es.httpserver.authentication;
 
 import com.sun.net.httpserver.BasicAuthenticator;
 import es.httpserver.controllers.UsersDataController;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by User: admin
@@ -10,12 +12,14 @@ import es.httpserver.controllers.UsersDataController;
  */
 public class BasicAuthenticationChecker extends BasicAuthenticator {
 
+    private static final Logger logger = LogManager.getLogger(BasicAuthenticationChecker.class.getName());
+
     public BasicAuthenticationChecker(String s) {
         super(s);
     }
 
     @Override public boolean checkCredentials(String username, String password) {
-        System.out.println("checkCredentials - [" + username + " : " + password + "]");
+        logger.debug("checkCredentials - [" + username + " : " + password + "]");
         return UsersDataController.getInstance().checkUserPassword(username, password);
     }
 }
