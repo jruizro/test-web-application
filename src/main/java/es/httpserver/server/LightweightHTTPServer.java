@@ -4,10 +4,7 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 import es.httpserver.authentication.BasicAuthenticationChecker;
 import es.httpserver.common.Constants;
-import es.httpserver.server.handlers.LoginHandler;
-import es.httpserver.server.handlers.LogoutHandler;
-import es.httpserver.server.handlers.UsersHandler;
-import es.httpserver.server.handlers.WebHandler;
+import es.httpserver.server.handlers.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,7 +44,7 @@ public class LightweightHTTPServer {
         HttpServer lightweightHTTPServer = HttpServer.create(inetSocketAddress, defaultBacklog);
 
         // All requests received by the server for the path will be handled by calling the given handler object
-        lightweightHTTPServer.createContext(Constants.ROOT_CONTEXTPATH, new WebHandler());
+        lightweightHTTPServer.createContext(Constants.ROOT_CONTEXTPATH, new RootHandler());
         lightweightHTTPServer.createContext(Constants.WEB_CONTEXTPATH, new WebHandler());
 
         lightweightHTTPServer.createContext(Constants.LOGIN_CONTEXTPATH, new LoginHandler());

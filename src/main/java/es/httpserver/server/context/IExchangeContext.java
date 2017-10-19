@@ -33,6 +33,8 @@ public interface IExchangeContext {
 
     String getSessionCookie();
 
+    String createSessionCookie();
+
     void sendResponse(int httpStatusCode, String responseBody) throws IOException;
 
 }

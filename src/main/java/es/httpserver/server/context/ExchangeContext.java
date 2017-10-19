@@ -53,7 +53,6 @@ public class ExchangeContext implements IExchangeContext {
         return getQueryParameters(bodyString);
     }
 
-
     @Override public HashMap<String, String> getQueryParameters(String allQueryParameters) {
 
         HashMap<String, String> listaParametrosValor = new HashMap<>();
@@ -113,27 +112,45 @@ public class ExchangeContext implements IExchangeContext {
      *
      * @return sessionId
      */
-    public String getSessionCookie() {
+    @Override public String getSessionCookie() {
 
         String sessionId;
+
+        // Print Headers
+        for (String key : httpExchange.getRequestHeaders().keySet()) {
+            logger.trace("HEADER > " + key + " : " + httpExchange.getRequestHeaders().get(key));
+        }
+
         if (httpExchange.getRequestHeaders().get(Constants.HEADER_COOKIE) != null) {
             sessionId = httpExchange.getRequestHeaders().get(Constants.HEADER_COOKIE).get(0);
-            logger.debug("getSessionCookie - Readed Session [" + sessionId + "]");
+            logger.debug("Readed Cookie Session [" + sessionId + "]");
         } else {
             // Si no viene una cookie -> la generamos
-            sessionId = UUID.randomUUID().toString();
-            httpExchange.getResponseHeaders().put(Constants.HEADER_SET_COOKIE, new ArrayList<String>() {
-                {
-                    add(sessionId);
-                }
-            });
-            logger.debug("getSessionCookie - Created new Session [" + sessionId + "]");
+            sessionId = createSessionCookie();
         }
+        return sessionId;
+    }
+
+
+    @Override public String createSessionCookie() {
+
+        // Print Headers
+        for (String key : httpExchange.getRequestHeaders().keySet()) {
+            logger.trace("HEADER > " + key + " : " + httpExchange.getRequestHeaders().get(key));
+        }
+
+        String sessionId = UUID.randomUUID().toString();
+        httpExchange.getResponseHeaders().put(Constants.HEADER_SET_COOKIE, new ArrayList<String>() {
+            {
+                add(sessionId);
+            }
+        });
+        logger.debug("Created new Cookie Session [" + sessionId + "]");
 
         return sessionId;
     }
 
-    public void sendResponse(int httpStatusCode, String responseBody) throws IOException {
+    @Override public void sendResponse(int httpStatusCode, String responseBody) throws IOException {
         httpExchange.sendResponseHeaders(httpStatusCode, responseBody.getBytes().length);
         httpExchange.getResponseBody().write(responseBody.getBytes());
         httpExchange.close();

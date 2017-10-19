@@ -1,6 +1,7 @@
 package es.httpserver.controllers;
 
 import es.httpserver.common.Constants;
+import es.httpserver.model.IUser;
 import es.httpserver.model.IWebSession;
 import es.httpserver.model.WebSession;
 import org.apache.logging.log4j.LogManager;
@@ -65,6 +66,15 @@ public class SessionController {
         sessionsList.put(sessionId, infoDeSesion);
         logger.debug("Almacenada la sesion '" + infoDeSesion.getId() + "' para un usuario NO LOGADO -> " + paginaSolicitada);
         return infoDeSesion;
+    }
+
+    public IWebSession updateUserSession(String sessionId, IUser userYaLogado) {
+
+        IWebSession sessionSinUser = sessionsList.get(sessionId);
+        sessionSinUser.setUser(userYaLogado);
+        logger.debug("Session " + sessionId + " asignada al usuario " + userYaLogado.getUsername());
+
+        return sessionSinUser;
     }
 
     public String removeSession(String sessionId) {
