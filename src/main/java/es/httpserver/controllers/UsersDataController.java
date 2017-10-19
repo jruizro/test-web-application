@@ -1,11 +1,11 @@
 package es.httpserver.controllers;
 
-import es.httpserver.common.Constants;
-import es.httpserver.model.User;
+import es.httpserver.dao.UsersDAO;
+import es.httpserver.model.IUser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.HashMap;
 
 /**
  * Created by User: admin
@@ -18,7 +18,7 @@ public class UsersDataController {
 
     private static UsersDataController instance = new UsersDataController();
 
-    private HashMap<String, User> listaUsuarios = new HashMap<>();
+    private HashMap<String, IUser> listaUsuarios = new HashMap<>();
 
 
     public static UsersDataController getInstance() {
@@ -30,46 +30,19 @@ public class UsersDataController {
 
     private UsersDataController() {
 
-        try {
-
-            ResourceBundle usersRolesConfig = ResourceBundle.getBundle(Constants.USERS_CONFIG_FILE);
-            logger.debug("Cargando configuración de Usuarios-Roles desde " + Constants.USERS_CONFIG_FILE + ".properties");
-
-            if (usersRolesConfig != null) {
-
-                List<String> listaDeUsuarios = readResourceWithCommas(usersRolesConfig.getString(Constants.PROPERTY_USERS_LIST));
-
-                for (String nombreUsuario : listaDeUsuarios) {
-                    User usuario = new User();
-                    usuario.setUsername(nombreUsuario);
-                    usuario.setPassword(usersRolesConfig.getString(nombreUsuario + Constants.PROPERTY_USER_PASS));
-                    usuario.setRoles(readResourceWithCommas(usersRolesConfig.getString(nombreUsuario + Constants.PROPERTY_USER_ROLE)));
-                    logger.debug("Leida configuracion del usuario: " + usuario.toString());
-                    listaUsuarios.put(usuario.getUsername(), usuario);
-                }
-
-            } else {
-                logger.error("ERROR al cargar el fichero de configuracion de Usuarios-Roles!");
-            }
-            logger.debug("Leida configuración de " + listaUsuarios.size() + " usuarios");
-
-        } catch (Exception e) {
-            logger.error("ERROR al cargar el fichero de configuracion de Usuarios-Roles : " + e.getMessage());
-            e.printStackTrace(System.out);
-        }
-
+        listaUsuarios = new UsersDAO().getUsers();
 
     }
 
-    public User addUser(User newUser) {
+    public IUser addUser(IUser newUser) {
         return listaUsuarios.put(newUser.getUsername(), newUser);
     }
 
-    public User updateUser(User updateUser) {
+    public IUser updateUser(IUser updateUser) {
         return listaUsuarios.put(updateUser.getUsername(), updateUser);
     }
 
-    public User deleteUser(String userToDelete) {
+    public IUser deleteUser(String userToDelete) {
         return listaUsuarios.remove(userToDelete);
     }
 
@@ -83,27 +56,18 @@ public class UsersDataController {
         return isValidUSer;
     }
 
-    public User getUser(String username) {
+    public IUser getUser(String username) {
         logger.debug("Buscando info del Usuario: " + username);
         return listaUsuarios.getOrDefault(username, null);
     }
 
-    public HashMap<String, User> getUsers() {
+    public HashMap<String, IUser> getUsers() {
         return listaUsuarios;
     }
 
     public void deleteAllUsers() {
         logger.debug("Se van borrar " + listaUsuarios.size() + " usuarios");
         listaUsuarios = new HashMap<>();
-    }
-
-    private List<String> readResourceWithCommas(String listaConComas) {
-        List<String> listaSeparadaSinComas = new Vector<>();
-        StringTokenizer serviceTokenizer = new StringTokenizer(listaConComas, ",");
-        while (serviceTokenizer.hasMoreElements()) {
-            listaSeparadaSinComas.add(serviceTokenizer.nextToken().trim());
-        }
-        return listaSeparadaSinComas;
     }
 
 }

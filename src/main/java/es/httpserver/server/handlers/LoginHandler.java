@@ -2,6 +2,8 @@ package es.httpserver.server.handlers;
 
 import es.httpserver.authentication.BasicAuthenticationChecker;
 import es.httpserver.common.Constants;
+import es.httpserver.controllers.NavigationController;
+import es.httpserver.model.IWebSession;
 import es.httpserver.model.WebSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +24,8 @@ public class LoginHandler extends HTTPCommonHandler {
 
         logger.debug("LoginHandler - post");
 
-        HashMap<String, String> bodyParameters = getRequestBodyParameters();
+        NavigationController navigationController = new NavigationController();
+        HashMap<String, String> bodyParameters = exchangeContext.getRequestBodyParameters();
 
         boolean isValidLogin = false;
 
@@ -37,16 +40,16 @@ public class LoginHandler extends HTTPCommonHandler {
 
         if (isValidLogin) {
 
-            String sessionId = getSessionCookie();
+            String sessionId = exchangeContext.getSessionCookie();
 
-            if (getSessionController().existSessionId(sessionId) && getSessionController().getSessionInfo(sessionId).getNextPage() != null) {
+            if (getSessionController().existSessionId(sessionId) && getSessionController().getSession(sessionId).getReferer() != null) {
 
-                String paginaSolicitada = getSessionController().getSessionInfo(sessionId).getNextPage();
+                String paginaSolicitada = getSessionController().getSession(sessionId).getReferer();
                 logger.debug("Usuario " + username + " pendiente de visualizar -> " + paginaSolicitada);
                 logger.debug("Login OK para el usuario " + username + " -> Se actualiza su session");
-                getSessionController().addSessionInfo(new WebSession(sessionId, getUsersDataController().getUser(username)));
+                IWebSession session = getSessionController().addSession(new WebSession(sessionId, getUsersDataController().getUser(username)));
                 // Verificamos si tras el nuevo login tiene acceso a la pagina anteriormente solicitada
-                if (getSessionController().hasAccessToPage(sessionId, paginaSolicitada)) {
+                if (navigationController.hasAccessToPage(session, paginaSolicitada)) {
                     // Si ya hay una session anonima -> Update Session & acceso a pagina Solicitada
                     sendSuccessfulResponse(generateHTMLPage(getPagePath(paginaSolicitada), username, ""));
                 } else {
@@ -56,7 +59,7 @@ public class LoginHandler extends HTTPCommonHandler {
             } else {
                 // New session y acceso al HOME
                 logger.debug("Login OK para el usuario " + username + " -> Se crea su session");
-                getSessionController().addSessionInfo(new WebSession(sessionId, getUsersDataController().getUser(username)));
+                getSessionController().addSession(new WebSession(sessionId, getUsersDataController().getUser(username)));
                 sendSuccessfulResponse(generateHTMLPage(Constants.HOME_PAGE_PATH, username, ""));
             }
 

@@ -19,34 +19,34 @@ import java.util.Vector;
  * Time: 11:28
  */
 @XmlRootElement
-public class User {
+public class User implements IUser {
 
     private String username;
     private List<String> roles = new Vector<>();
 
     private String password;
 
-    public String getUsername() {
+    @Override public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    @Override public void setUsername(String username) {
         this.username = username;
     }
 
-    public List<String> getRoles() {
+    @Override public List<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<String> roles) {
+    @Override public void setRoles(List<String> roles) {
         this.roles = roles;
     }
 
-    @XmlTransient public boolean isCorrectPassword(String password) {
+    @Override @XmlTransient public boolean isCorrectPassword(String password) {
         return this.password.equals(password);
     }
 
-    public void setPassword(String password) {
+    @Override public void setPassword(String password) {
         this.password = password;
     }
 
@@ -54,7 +54,7 @@ public class User {
         return new StringBuilder("Username: '").append(username).append("' -> Roles: ").append(Arrays.toString(roles.toArray())).toString();
     }
 
-    public String toJson() {
+    @Override public String toJson() {
 
         JsonArrayBuilder rolesJson = Json.createArrayBuilder();
         for (String rol : roles) {
@@ -64,7 +64,7 @@ public class User {
         return usuarioJson.build().toString();
     }
 
-    public String toXml() {
+    @Override public String toXml() {
 
         JAXBContext contexto = null;
         String requestToXML = null;

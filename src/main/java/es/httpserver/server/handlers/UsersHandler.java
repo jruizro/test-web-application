@@ -2,6 +2,8 @@ package es.httpserver.server.handlers;
 
 import com.sun.net.httpserver.Headers;
 import es.httpserver.common.Constants;
+import es.httpserver.common.Utils;
+import es.httpserver.model.IUser;
 import es.httpserver.model.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,8 +30,8 @@ public class UsersHandler extends HTTPCommonHandler {
 
         logger.debug("UsersHandler - get -> Read User");
 
-        List<String> uriParameters = getRequestUriPath(Constants.USERS_CONTEXTPATH);
-        User userRequested = getUsersDataController().getUser(uriParameters.get(0));
+        List<String> uriParameters = exchangeContext.getRequestUriPath(Constants.USERS_CONTEXTPATH);
+        IUser userRequested = getUsersDataController().getUser(uriParameters.get(0));
 
         if (userRequested != null) {
             sendRESTSuccessfulResponse(userRequested);
@@ -51,13 +53,13 @@ public class UsersHandler extends HTTPCommonHandler {
     public void post() throws IOException {
 
         logger.debug("UsersHandler - post -> Create User");
-        HashMap<String, String> bodyParameters = getRequestBodyParameters();
+        HashMap<String, String> bodyParameters = exchangeContext.getRequestBodyParameters();
 
         if (bodyParameters.get("username") != null && bodyParameters.get("password") != null && bodyParameters.get("roles") != null) {
-            User newUser = new User();
+            IUser newUser = new User();
             newUser.setUsername(bodyParameters.get("username"));
             newUser.setPassword(bodyParameters.get("password"));
-            newUser.setRoles(separaCamposPorComas(bodyParameters.get("roles")));
+            newUser.setRoles(Utils.separaCamposPorDelimitador(bodyParameters.get("roles"), ","));
 
             if (getUsersDataController().getUser(newUser.getUsername()) != null) {
                 logger.error("ERROR: El usuario ya existe");
@@ -85,15 +87,15 @@ public class UsersHandler extends HTTPCommonHandler {
     public void put() throws IOException {
         logger.debug("UsersHandler - update - Update User");
 
-        List<String> uriParameters = getRequestUriPath(Constants.USERS_CONTEXTPATH);
+        List<String> uriParameters = exchangeContext.getRequestUriPath(Constants.USERS_CONTEXTPATH);
 
-        User userToUpdate = getUsersDataController().getUser(uriParameters.get(0));
+        IUser userToUpdate = getUsersDataController().getUser(uriParameters.get(0));
         if (userToUpdate != null) {
 
-            HashMap<String, String> bodyParameters = getRequestBodyParameters();
+            HashMap<String, String> bodyParameters = exchangeContext.getRequestBodyParameters();
             if (bodyParameters.get("roles") != null) {
-                userToUpdate.setRoles(separaCamposPorComas(bodyParameters.get("roles")));
-                User userUpdated = getUsersDataController().updateUser(userToUpdate);
+                userToUpdate.setRoles(Utils.separaCamposPorDelimitador(bodyParameters.get("roles"), ","));
+                IUser userUpdated = getUsersDataController().updateUser(userToUpdate);
                 sendRESTSuccessfulResponse(userUpdated);
             } else {
                 logger.error("ERROR: Falta parametro obligatorio");
@@ -116,8 +118,8 @@ public class UsersHandler extends HTTPCommonHandler {
     public void delete() throws IOException {
         logger.debug("UsersHandler - delete -> Delete User");
 
-        List<String> uriParameters = getRequestUriPath(Constants.USERS_CONTEXTPATH);
-        User userDeleted = getUsersDataController().deleteUser(uriParameters.get(0));
+        List<String> uriParameters = exchangeContext.getRequestUriPath(Constants.USERS_CONTEXTPATH);
+        IUser userDeleted = getUsersDataController().deleteUser(uriParameters.get(0));
 
         if (userDeleted != null) {
             sendRESTSuccessfulResponse(userDeleted);
@@ -128,11 +130,11 @@ public class UsersHandler extends HTTPCommonHandler {
     }
 
 
-    private String generateRESTResponse(User userInfo) {
+    private String generateRESTResponse(IUser userInfo) {
 
         String responseBody;
-        Headers responseHeaders = getResponseHeaders();
-        HashMap<String, String> requestHeaders = getRequestHeaders();
+        Headers responseHeaders = exchangeContext.getResponseHeaders();
+        HashMap<String, String> requestHeaders = exchangeContext.getRequestHeaders();
 
         String contentType = requestHeaders.get(Constants.HEADER_ACCEPT);
         // Content Negotiation
@@ -155,11 +157,11 @@ public class UsersHandler extends HTTPCommonHandler {
     }
 
 
-    private void sendRESTSuccessfulResponse(User userInfo) throws IOException {
+    private void sendRESTSuccessfulResponse(IUser userInfo) throws IOException {
         sendSuccessfulResponse(generateRESTResponse(userInfo));
     }
 
-    private void sendRESTCreatedResponse(User user) throws IOException {
+    private void sendRESTCreatedResponse(IUser user) throws IOException {
         sendCreatedResponse(generateRESTResponse(user));
     }
 

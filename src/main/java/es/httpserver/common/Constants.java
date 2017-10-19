@@ -58,6 +58,4 @@ public class Constants {
     public static final String PROPERTY_USER_ROLE = ".role";
 
 
-
-
 }

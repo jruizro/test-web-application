@@ -1,7 +1,7 @@
 package es.httpserver.controllers;
 
 import es.httpserver.common.Constants;
-import es.httpserver.model.User;
+import es.httpserver.model.IWebSession;
 import es.httpserver.model.WebSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +22,8 @@ public class SessionController {
     private static SessionController instance = null;
 
     private int sessionTimeout = 300000; // por defecto 5 minutos
-    private Map<String, WebSession> sessionsList = null;
+
+    private Map<String, IWebSession> sessionsList = null;
 
     public static SessionController getInstance() {
         if (instance == null) {
@@ -33,7 +34,7 @@ public class SessionController {
 
     private SessionController() {
         sessionsList = new HashMap<>();
-        logger.debug("Session controller started with " + sessionsList.size() + " controllers");
+        logger.debug("Session controller started with " + sessionsList.size() + " sessions");
 
         try {
 
@@ -48,23 +49,25 @@ public class SessionController {
         }
     }
 
-    public WebSession getSessionInfo(String sessionId) {
+    public IWebSession getSession(String sessionId) {
         return sessionsList.get(sessionId);
     }
 
-    public void addSessionInfo(WebSession infoDeSesion) {
+    public IWebSession addSession(IWebSession infoDeSesion) {
         sessionsList.put(infoDeSesion.getId(), infoDeSesion);
         logger.debug("Almacenada la sesion '" + infoDeSesion.getId() + "' del usuario '" + infoDeSesion.getUser().getUsername() + "'");
+        return infoDeSesion;
     }
 
-    public void addNoLoginSessionInfo(String sessionId, String paginaSolicitada) {
-        WebSession infoDeSesion = new WebSession(sessionId, new User());
-        infoDeSesion.setNextPage(paginaSolicitada);
+    public IWebSession addNoLoginSession(String sessionId, String paginaSolicitada) {
+        IWebSession infoDeSesion = new WebSession(sessionId);
+        infoDeSesion.setReferer(paginaSolicitada);
         sessionsList.put(sessionId, infoDeSesion);
         logger.debug("Almacenada la sesion '" + infoDeSesion.getId() + "' para un usuario NO LOGADO -> " + paginaSolicitada);
+        return infoDeSesion;
     }
 
-    public String removeSessionInfo(String sessionId) {
+    public String removeSession(String sessionId) {
 
         String ususarioDeLaSession = "";
         if (sessionsList.containsKey(sessionId)) {
@@ -73,40 +76,6 @@ public class SessionController {
             sessionsList.remove(sessionId);
         }
         return ususarioDeLaSession;
-    }
-
-    public boolean hasAccessToPage(String sessionId, String paginaDestino) {
-
-        boolean tienePermiso;
-        WebSession userSession = sessionsList.get(sessionId);
-
-        logger.debug("Session '" + sessionId + "' solicita permiso para '" + paginaDestino + "'");
-
-        switch (paginaDestino) {
-            case Constants.PAGE_1_PARAMETER:
-                tienePermiso = userSession.getUser().getRoles().contains(Constants.ROLE_4_PAGE_1) || userSession.getUser().getRoles().contains(Constants.ROLE_ADMIN);
-                break;
-            case Constants.PAGE_2_PARAMETER:
-                tienePermiso = userSession.getUser().getRoles().contains(Constants.ROLE_4_PAGE_2) || userSession.getUser().getRoles().contains(Constants.ROLE_ADMIN);
-                break;
-            case Constants.PAGE_3_PARAMETER:
-                tienePermiso = userSession.getUser().getRoles().contains(Constants.ROLE_4_PAGE_3) || userSession.getUser().getRoles().contains(Constants.ROLE_ADMIN);
-                break;
-            case Constants.HOME_PAGE_PATH:
-                tienePermiso = true;
-                break;
-            case Constants.LOGIN_PAGE_PATH:
-                tienePermiso = true;
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid navigation page! " + paginaDestino);
-        }
-
-        return tienePermiso;
-    }
-
-    public String getSessionUserName(String sessionId) {
-        return sessionsList.get(sessionId).getUser().getUsername();
     }
 
     public boolean isExpired(String sessionId) {

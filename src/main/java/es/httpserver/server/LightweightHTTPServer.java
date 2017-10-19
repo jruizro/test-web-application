@@ -39,7 +39,7 @@ public class LightweightHTTPServer {
             try {
                 defaultPort = Integer.parseInt(args[0]);
             } catch (NumberFormatException exception) {
-                logger.debug("Incorrect port number, using port " + DEFAULT_PORT);
+                logger.debug("Incorrect port number, using default port " + DEFAULT_PORT);
             }
         }
 
@@ -62,7 +62,7 @@ public class LightweightHTTPServer {
         // Server ups!
         lightweightHTTPServer.start();
 
-        logger.debug("es.httpserver.server.LightweightHTTPServer is up! and listening on port " + defaultPort);
+        logger.debug("LightweightHTTPServer is up! and listening on port " + defaultPort);
 
         logger.debug("Press Ctrl-C to terminate.");
     }

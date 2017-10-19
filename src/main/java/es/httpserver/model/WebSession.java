@@ -5,50 +5,56 @@ package es.httpserver.model;
  * Date: 10/10/2017
  * Time: 12:39
  */
-public class WebSession {
+public class WebSession implements IWebSession {
 
     private String id;
-    private User user;
-    private String nextPage = null;
+    private IUser user;
+    private String referer = null;
 
     private long lastAction = System.currentTimeMillis();
 
-    public WebSession(String id, User user) {
+    public WebSession(String id) {
+        this.id = id;
+        this.user = new User();
+        lastAction = System.currentTimeMillis();
+    }
+
+    public WebSession(String id, IUser user) {
         this.id = id;
         this.user = user;
         lastAction = System.currentTimeMillis();
     }
 
-    public String getId() {
+    @Override public String getId() {
         lastAction = System.currentTimeMillis();
         return id;
     }
 
-    public User getUser() {
+    @Override public IUser getUser() {
         lastAction = System.currentTimeMillis();
         return user;
     }
 
-    public void setUser(User user) {
+    @Override public void setUser(IUser user) {
         lastAction = System.currentTimeMillis();
         this.user = user;
     }
 
-    public String getNextPage() {
+    @Override public String getReferer() {
         lastAction = System.currentTimeMillis();
-        return nextPage;
+        return referer;
     }
 
-    public void setNextPage(String nextPage) {
-        this.nextPage = nextPage;
+    @Override public void setReferer(String referer) {
+        this.referer = referer;
     }
 
-    public void logout() {
+    @Override public void logout() {
         this.user = null;
-        nextPage = null;
+        referer = null;
     }
 
-    public boolean isExpired(int millisecondsToExpire) {
+    @Override public boolean isExpired(int millisecondsToExpire) {
         return (System.currentTimeMillis() - lastAction) > millisecondsToExpire;
     }
 

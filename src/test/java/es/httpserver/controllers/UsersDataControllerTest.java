@@ -1,18 +1,17 @@
 package es.httpserver.controllers;
 
 import es.httpserver.common.Constants;
+import es.httpserver.model.IUser;
 import es.httpserver.model.User;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.Vector;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by User: admin
@@ -22,7 +21,7 @@ import static org.junit.Assert.*;
 public class UsersDataControllerTest {
 
 
-    User testuser;
+    IUser testuser;
 
     @Before public void setUp() throws Exception {
 

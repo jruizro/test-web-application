@@ -1,6 +1,8 @@
 package es.httpserver.controllers;
 
 import es.httpserver.common.Constants;
+import es.httpserver.model.IUser;
+import es.httpserver.model.IWebSession;
 import es.httpserver.model.User;
 import es.httpserver.model.WebSession;
 import org.junit.Before;
@@ -8,10 +10,10 @@ import org.junit.Test;
 
 import java.util.Vector;
 
-import static java.lang.Thread.sleep;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by User: admin
@@ -20,8 +22,8 @@ import static org.junit.Assert.*;
  */
 public class SessionControllerTest {
 
-    User testuser;
-    WebSession testsession;
+    IUser testuser;
+    IWebSession testsession;
 
     @Before public void setUp() throws Exception {
 
@@ -31,7 +33,7 @@ public class SessionControllerTest {
         Vector<String> roles = new Vector<>();
         roles.add(Constants.ROLE_4_PAGE_1);
         testuser.setRoles(roles);
-        testsession = new WebSession("TESTSESION" , testuser);
+        testsession = new WebSession("TESTSESION", testuser);
 
     }
 
@@ -49,9 +51,9 @@ public class SessionControllerTest {
 
         // given
         SessionController controladorDeSesiones = SessionController.getInstance();
-        controladorDeSesiones.addSessionInfo(testsession);
+        controladorDeSesiones.addSession(testsession);
         // when
-        WebSession session = controladorDeSesiones.getSessionInfo(testsession.getId());
+        IWebSession session = controladorDeSesiones.getSession(testsession.getId());
         // then
         assertThat(session, is(equalTo(testsession)));
 
@@ -63,9 +65,9 @@ public class SessionControllerTest {
         SessionController controladorDeSesiones = SessionController.getInstance();
         controladorDeSesiones.destroySessions();
         // when
-        controladorDeSesiones.addSessionInfo(testsession);
+        controladorDeSesiones.addSession(testsession);
         // then
-        assertThat(controladorDeSesiones.getSessionInfo(testsession.getId()), is(equalTo(testsession)));
+        assertThat(controladorDeSesiones.getSession(testsession.getId()), is(equalTo(testsession)));
 
     }
 
@@ -75,10 +77,10 @@ public class SessionControllerTest {
         SessionController controladorDeSesiones = SessionController.getInstance();
         controladorDeSesiones.destroySessions();
         // when
-        controladorDeSesiones.addNoLoginSessionInfo("NO_LOGIN_USER", Constants.PAGE_1_PARAMETER);
+        controladorDeSesiones.addNoLoginSession("NO_LOGIN_USER", Constants.PAGE_1_PARAMETER);
         // then
-        assertThat(controladorDeSesiones.getSessionUserName("NO_LOGIN_USER"), is(equalTo(null)));
-        assertThat(controladorDeSesiones.getSessionInfo("NO_LOGIN_USER").getNextPage(), is(equalTo(Constants.PAGE_1_PARAMETER)));
+        assertThat(controladorDeSesiones.getSession("NO_LOGIN_USER").getUser().getUsername(), is(equalTo(null)));
+        assertThat(controladorDeSesiones.getSession("NO_LOGIN_USER").getReferer(), is(equalTo(Constants.PAGE_1_PARAMETER)));
 
     }
 
@@ -88,23 +90,10 @@ public class SessionControllerTest {
         SessionController controladorDeSesiones = SessionController.getInstance();
         controladorDeSesiones.destroySessions();
         // when
-        controladorDeSesiones.addSessionInfo(testsession);
-        controladorDeSesiones.removeSessionInfo(testsession.getId());
+        controladorDeSesiones.addSession(testsession);
+        controladorDeSesiones.removeSession(testsession.getId());
         // then
-        assertThat(controladorDeSesiones.getSessionInfo(testsession.getId()), is(equalTo(null)));
-
-    }
-
-    @Test public void hasAccessToPage() throws Exception {
-
-        // given
-        SessionController controladorDeSesiones = SessionController.getInstance();
-        controladorDeSesiones.destroySessions();
-        // when
-        controladorDeSesiones.addSessionInfo(testsession);
-        // then
-        assertThat(controladorDeSesiones.hasAccessToPage(testsession.getId(), Constants.PAGE_1_PARAMETER), is(equalTo(true)));
-        assertThat(controladorDeSesiones.hasAccessToPage(testsession.getId(), Constants.PAGE_3_PARAMETER), is(equalTo(false)));
+        assertThat(controladorDeSesiones.getSession(testsession.getId()), is(equalTo(null)));
 
     }
 
@@ -114,9 +103,9 @@ public class SessionControllerTest {
         SessionController controladorDeSesiones = SessionController.getInstance();
         controladorDeSesiones.destroySessions();
         // when
-        controladorDeSesiones.addSessionInfo(testsession);
+        controladorDeSesiones.addSession(testsession);
         // then
-        assertThat(controladorDeSesiones.getSessionUserName(testsession.getId()), is(equalTo("testuser")));
+        assertThat(controladorDeSesiones.getSession(testsession.getId()).getUser().getUsername(), is(equalTo("testuser")));
 
     }
 
@@ -126,7 +115,7 @@ public class SessionControllerTest {
         SessionController controladorDeSesiones = SessionController.getInstance();
         controladorDeSesiones.destroySessions();
         // when
-        controladorDeSesiones.addSessionInfo(testsession);
+        controladorDeSesiones.addSession(testsession);
         // then
         assertThat(controladorDeSesiones.isExpired("TESTSESION"), is(equalTo(false)));
         Thread.sleep(30010);
@@ -140,7 +129,7 @@ public class SessionControllerTest {
         SessionController controladorDeSesiones = SessionController.getInstance();
         controladorDeSesiones.destroySessions();
         // when
-        controladorDeSesiones.addSessionInfo(testsession);
+        controladorDeSesiones.addSession(testsession);
         // then
         assertThat(controladorDeSesiones.existSessionId("TESTSESION"), is(equalTo(true)));
 
@@ -151,7 +140,7 @@ public class SessionControllerTest {
         // given
         SessionController controladorDeSesiones = SessionController.getInstance();
         // when
-        controladorDeSesiones.addSessionInfo(testsession);
+        controladorDeSesiones.addSession(testsession);
         controladorDeSesiones.destroySessions();
         // then
         assertThat(controladorDeSesiones.existSessionId("TESTSESION"), is(equalTo(false)));
