@@ -2,6 +2,7 @@ package es.httpserver.controllers;
 
 import es.httpserver.common.Constants;
 import es.httpserver.model.IWebSession;
+import es.httpserver.model.UserRole;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,13 +23,13 @@ public class NavigationController {
 
         switch (paginaDestino) {
             case Constants.PAGE_1_PARAMETER:
-                tienePermiso = userSession.getUser().getRoles().contains(Constants.ROLE_4_PAGE_1) || userSession.getUser().getRoles().contains(Constants.ROLE_ADMIN);
+                tienePermiso = userSession.getUser().getRoles().contains(UserRole.PAGE_1) || userSession.getUser().getRoles().contains(UserRole.ADMIN);
                 break;
             case Constants.PAGE_2_PARAMETER:
-                tienePermiso = userSession.getUser().getRoles().contains(Constants.ROLE_4_PAGE_2) || userSession.getUser().getRoles().contains(Constants.ROLE_ADMIN);
+                tienePermiso = userSession.getUser().getRoles().contains(UserRole.PAGE_2) || userSession.getUser().getRoles().contains(UserRole.ADMIN);
                 break;
             case Constants.PAGE_3_PARAMETER:
-                tienePermiso = userSession.getUser().getRoles().contains(Constants.ROLE_4_PAGE_3) || userSession.getUser().getRoles().contains(Constants.ROLE_ADMIN);
+                tienePermiso = userSession.getUser().getRoles().contains(UserRole.PAGE_3) || userSession.getUser().getRoles().contains(UserRole.ADMIN);
                 break;
             case Constants.HOME_PAGE_PATH:
                 tienePermiso = true;

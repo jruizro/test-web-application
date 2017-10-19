@@ -22,7 +22,7 @@ import java.util.Vector;
 public class User implements IUser {
 
     private String username;
-    private List<String> roles = new Vector<>();
+    private List<UserRole> roles = new Vector<>();
 
     private String password;
 
@@ -34,11 +34,11 @@ public class User implements IUser {
         this.username = username;
     }
 
-    @Override public List<String> getRoles() {
+    @Override public List<UserRole> getRoles() {
         return roles;
     }
 
-    @Override public void setRoles(List<String> roles) {
+    @Override public void setRoles(List<UserRole> roles) {
         this.roles = roles;
     }
 
@@ -57,8 +57,8 @@ public class User implements IUser {
     @Override public String toJson() {
 
         JsonArrayBuilder rolesJson = Json.createArrayBuilder();
-        for (String rol : roles) {
-            rolesJson.add(Json.createObjectBuilder().add("rol", rol));
+        for (UserRole rol : roles) {
+            rolesJson.add(Json.createObjectBuilder().add("rol", rol.getString()));
         }
         JsonObjectBuilder usuarioJson = Json.createObjectBuilder().add("username", username).add("roles", rolesJson.build().toString());
         return usuarioJson.build().toString();

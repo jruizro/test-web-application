@@ -5,12 +5,14 @@ import es.httpserver.common.Constants;
 import es.httpserver.common.Utils;
 import es.httpserver.model.IUser;
 import es.httpserver.model.User;
+import es.httpserver.model.UserRole;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by User: admin
@@ -59,7 +61,13 @@ public class UsersHandler extends HTTPCommonHandler {
             IUser newUser = new User();
             newUser.setUsername(bodyParameters.get("username"));
             newUser.setPassword(bodyParameters.get("password"));
-            newUser.setRoles(Utils.separaCamposPorDelimitador(bodyParameters.get("roles"), ","));
+
+            List<UserRole> listaDeRolesUsuario = new Vector<>();
+            List<String> rolesEnString = Utils.separaCamposPorDelimitador(bodyParameters.get("roles"), ",");
+            for (String role: rolesEnString) {
+                UserRole.getFromString(role).ifPresent(listaDeRolesUsuario::add);
+            }
+            newUser.setRoles(listaDeRolesUsuario);
 
             if (getUsersDataController().getUser(newUser.getUsername()) != null) {
                 logger.error("ERROR: El usuario ya existe");
@@ -94,7 +102,14 @@ public class UsersHandler extends HTTPCommonHandler {
 
             HashMap<String, String> bodyParameters = exchangeContext.getRequestBodyParameters();
             if (bodyParameters.get("roles") != null) {
-                userToUpdate.setRoles(Utils.separaCamposPorDelimitador(bodyParameters.get("roles"), ","));
+
+                List<UserRole> listaDeRolesUsuario = new Vector<>();
+                List<String> rolesEnString = Utils.separaCamposPorDelimitador(bodyParameters.get("roles"), ",");
+                for (String role: rolesEnString) {
+                    UserRole.getFromString(role).ifPresent(listaDeRolesUsuario::add);
+                }
+                userToUpdate.setRoles(listaDeRolesUsuario);
+
                 IUser userUpdated = getUsersDataController().updateUser(userToUpdate);
                 sendRESTSuccessfulResponse(userUpdated);
             } else {

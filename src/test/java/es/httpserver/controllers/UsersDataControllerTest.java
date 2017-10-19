@@ -1,8 +1,8 @@
 package es.httpserver.controllers;
 
-import es.httpserver.common.Constants;
 import es.httpserver.model.IUser;
 import es.httpserver.model.User;
+import es.httpserver.model.UserRole;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,8 +28,8 @@ public class UsersDataControllerTest {
         testuser = new User();
         testuser.setUsername("testuser");
         testuser.setPassword("12345");
-        Vector<String> roles = new Vector<>();
-        roles.add(Constants.ROLE_4_PAGE_2);
+        Vector<UserRole> roles = new Vector<>();
+        roles.add(UserRole.PAGE_2);
         testuser.setRoles(roles);
 
     }
@@ -73,8 +73,8 @@ public class UsersDataControllerTest {
         UsersDataController controladorDeUsuarios = UsersDataController.getInstance();
         controladorDeUsuarios.deleteAllUsers();
         controladorDeUsuarios.addUser(testuser);
-        Vector<String> rolesNuevos = new Vector<>();
-        rolesNuevos.add(Constants.ROLE_ADMIN);
+        Vector<UserRole> rolesNuevos = new Vector<>();
+        rolesNuevos.add(UserRole.ADMIN);
         testuser.setRoles(rolesNuevos);
         // when
         controladorDeUsuarios.updateUser(testuser);

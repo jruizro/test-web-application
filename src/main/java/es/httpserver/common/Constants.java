@@ -20,11 +20,6 @@ public class Constants {
     public static final String WEB_USERNAME_PATTERN = "#$USERNAME$#";
     public static final String WEB_ERROR_PATTERN = "#$ERROR$#";
 
-    public static final String ROLE_4_PAGE_1 = "PAGE_1";
-    public static final String ROLE_4_PAGE_2 = "PAGE_2";
-    public static final String ROLE_4_PAGE_3 = "PAGE_3";
-    public static final String ROLE_ADMIN = "ADMIN";
-
     // The path specifies the root URI path for this context
     public static String ROOT_CONTEXTPATH = "/";
     public static String LOGIN_CONTEXTPATH = "/login";
@@ -39,8 +34,6 @@ public class Constants {
     public static final String MIME_FORMAT_TEXT = "text/plain";
     public static final String DEFAULT_CHARSET = "UTF-8";
 
-    public static final String HEADER_REFERER = "Referer";
-    public static final String HEADER_HOST = "Host";
     public static final String HEADER_COOKIE = "Cookie";
     public static final String HEADER_SET_COOKIE = "Set-Cookie";
 

@@ -1,10 +1,7 @@
 package es.httpserver.controllers;
 
 import es.httpserver.common.Constants;
-import es.httpserver.model.IUser;
-import es.httpserver.model.IWebSession;
-import es.httpserver.model.User;
-import es.httpserver.model.WebSession;
+import es.httpserver.model.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,8 +27,8 @@ public class SessionControllerTest {
         testuser = new User();
         testuser.setUsername("testuser");
         testuser.setPassword("12345");
-        Vector<String> roles = new Vector<>();
-        roles.add(Constants.ROLE_4_PAGE_1);
+        Vector<UserRole> roles = new Vector<>();
+        roles.add(UserRole.PAGE_1);
         testuser.setRoles(roles);
         testsession = new WebSession("TESTSESION", testuser);
 

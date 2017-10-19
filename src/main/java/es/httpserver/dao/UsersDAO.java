@@ -4,12 +4,14 @@ import es.httpserver.common.Constants;
 import es.httpserver.common.Utils;
 import es.httpserver.model.IUser;
 import es.httpserver.model.User;
+import es.httpserver.model.UserRole;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Vector;
 
 /**
  * Lee la información de los usuarios
@@ -38,7 +40,14 @@ public class UsersDAO {
                     IUser usuario = new User();
                     usuario.setUsername(nombreUsuario);
                     usuario.setPassword(usersRolesConfig.getString(nombreUsuario + Constants.PROPERTY_USER_PASS));
-                    usuario.setRoles(Utils.separaCamposPorDelimitador(usersRolesConfig.getString(nombreUsuario + Constants.PROPERTY_USER_ROLE), ","));
+                    List<UserRole> listaDeRolesUsuario = new Vector<>();
+
+                    List<String> rolesEnString = Utils.separaCamposPorDelimitador(usersRolesConfig.getString(nombreUsuario + Constants.PROPERTY_USER_ROLE), ",");
+                    for (String role: rolesEnString) {
+                        UserRole.getFromString(role).ifPresent(listaDeRolesUsuario::add);
+                    }
+
+                    usuario.setRoles(listaDeRolesUsuario);
                     logger.debug("Leida configuracion del usuario: " + usuario.toString());
                     listaUsuarios.put(usuario.getUsername(), usuario);
                 }

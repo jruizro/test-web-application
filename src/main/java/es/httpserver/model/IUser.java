@@ -13,9 +13,9 @@ public interface IUser {
 
     void setUsername(String username);
 
-    List<String> getRoles();
+    List<UserRole> getRoles();
 
-    void setRoles(List<String> roles);
+    void setRoles(List<UserRole> roles);
 
     @XmlTransient boolean isCorrectPassword(String password);
 
