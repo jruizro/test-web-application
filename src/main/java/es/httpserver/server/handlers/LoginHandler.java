@@ -33,7 +33,7 @@ public class LoginHandler extends HTTPCommonHandler {
         String password = bodyParameters.get(Constants.REQ_PARAM_PASSWORD);
 
         if (username != null && password != null) {
-            logger.debug("Validando credenciales para [" + username + " -> " + password + "]");
+            logger.debug("Checking credentials for [" + username + " -> " + password + "]");
             BasicAuthenticationChecker basicAuthenticationChecker = new BasicAuthenticationChecker("login");
             isValidLogin = basicAuthenticationChecker.checkCredentials(username, password);
         }
@@ -50,8 +50,8 @@ public class LoginHandler extends HTTPCommonHandler {
                 if (sessionUpdated.getReferer() != null) {
 
                     String paginaSolicitada = getSessionController().getSession(sessionId).getReferer();
-                    logger.debug("Usuario " + username + " pendiente de visualizar -> " + paginaSolicitada);
-                    logger.debug("Login OK para el usuario " + username + " -> Se actualiza su session");
+                    logger.debug("User " + username + " pending viewing -> " + paginaSolicitada);
+                    logger.debug("Login OK for user " + username + " -> Session info updated");
 
                     // Verificamos si tras el nuevo login tiene acceso a la pagina anteriormente solicitada
                     if (navigationController.hasAccessToPage(sessionUpdated, paginaSolicitada)) {
@@ -59,7 +59,7 @@ public class LoginHandler extends HTTPCommonHandler {
                         sendSuccessfulResponse(generateHTMLPage(navigationController.getPagePath(paginaSolicitada), username, ""));
                     } else {
                         // Si de nuevo NO tiene acceso a la pagina solicitada -> Home
-                        sendSuccessfulResponse(generateHTMLPage(Constants.HOME_PAGE_PATH, username, "ERROR: No posee el rol necesario para accceder a " + paginaSolicitada));
+                        sendSuccessfulResponse(generateHTMLPage(Constants.HOME_PAGE_PATH, username, "ERROR: User does not have the necessary role to " + paginaSolicitada));
                     }
                 } else {
                     // Si no tiene pagina pendiente de ver -> HOME
@@ -68,13 +68,13 @@ public class LoginHandler extends HTTPCommonHandler {
 
             } else {
                 // New session y acceso al HOME
-                logger.debug("Login OK para el usuario " + username + " -> Se crea su session");
+                logger.debug("Login OK for user " + username + " -> Created a new session");
                 getSessionController().addSession(new WebSession(sessionId, getUsersDataController().getUser(username)));
                 sendSuccessfulResponse(generateHTMLPage(Constants.HOME_PAGE_PATH, username, ""));
             }
 
         } else {
-            logger.debug("Login KO para el usuario " + username);
+            logger.debug("Login KO for user " + username);
             sendSuccessfulResponse(generateHTMLPage(Constants.LOGIN_PAGE_PATH, username, "ERROR: Invalid Credentials"));
         }
     }

@@ -40,7 +40,6 @@ public class HTTPCommonHandler implements HttpHandler {
         usersDataController = UsersDataController.getInstance();
 
         String requestMethod = exchangeContext.getRequestMethod().toLowerCase();
-        logger.debug("Procesando peticion del cliente: " + exchangeContext.getRemoteAddress().getHostName());
 
         try {
             Method method = this.getClass().getDeclaredMethod(requestMethod);
@@ -76,6 +75,10 @@ public class HTTPCommonHandler implements HttpHandler {
         exchangeContext.sendResponse(HttpURLConnection.HTTP_NOT_FOUND, "404 Not Found");
     }
 
+    protected void sendServerError(String responseBody) throws IOException {
+        exchangeContext.sendResponse(HttpURLConnection.HTTP_UNAVAILABLE, responseBody);
+    }
+
     protected void sendServerError() throws IOException {
         exchangeContext.sendResponse(HttpURLConnection.HTTP_UNAVAILABLE, "503 Server Error");
     }
@@ -105,7 +108,7 @@ public class HTTPCommonHandler implements HttpHandler {
      */
     protected String generateHTMLPage(String pathToHTMLTemplate, String userName, String errorMSG) throws IOException {
 
-        logger.debug("generateHTMLPage - " + pathToHTMLTemplate + " [" + userName + "," + errorMSG + "]");
+        logger.debug("Render HTML Page - " + pathToHTMLTemplate + " [" + userName + "," + errorMSG + "]");
 
         InputStream template = this.getClass().getResourceAsStream(pathToHTMLTemplate);
         StringBuilder stringBuilderTemplate = new StringBuilder(new BufferedReader(new InputStreamReader(template)).lines().collect(Collectors.joining("\n")));

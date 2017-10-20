@@ -1,7 +1,6 @@
 package es.httpserver.dao;
 
 import es.httpserver.common.Constants;
-;
 import es.httpserver.model.IUser;
 import es.httpserver.model.User;
 import es.httpserver.model.UserRole;
@@ -14,6 +13,8 @@ import java.util.ResourceBundle;
 import java.util.Vector;
 
 import static es.httpserver.common.Utils.splitFiledsWithDelimeter;
+
+;
 
 /**
  * Lee la información de los usuarios
@@ -32,7 +33,7 @@ public class UsersDAO {
         try {
 
             ResourceBundle usersRolesConfig = ResourceBundle.getBundle(Constants.USERS_CONFIG_FILE);
-            logger.debug("Cargando configuración de Usuarios-Roles desde " + Constants.USERS_CONFIG_FILE + ".properties");
+            logger.debug("Loading Users-Roles configuration from " + Constants.USERS_CONFIG_FILE + ".properties");
 
             if (usersRolesConfig != null) {
 
@@ -50,17 +51,17 @@ public class UsersDAO {
                     }
 
                     usuario.setRoles(listaDeRolesUsuario);
-                    logger.debug("Leida configuracion del usuario: " + usuario.toString());
+                    logger.debug("Loaded user info of user: " + usuario.toString());
                     listaUsuarios.put(usuario.getUsername(), usuario);
                 }
 
             } else {
-                logger.error("ERROR al cargar el fichero de configuracion de Usuarios-Roles!");
+                logger.error("ERROR loading configuration file of Users-Roles!");
             }
-            logger.debug("Leida configuración de " + listaUsuarios.size() + " usuarios");
+            logger.debug("Loaded configuration for " + listaUsuarios.size() + " users");
 
         } catch (Exception e) {
-            logger.error("ERROR al cargar el fichero de configuracion de Usuarios-Roles : " + e.getMessage());
+            logger.error("ERROR loading configuration file of Users-Roles : " + e.getMessage());
             e.printStackTrace(System.out);
         }
         return listaUsuarios;

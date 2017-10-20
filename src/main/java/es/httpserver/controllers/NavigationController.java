@@ -21,7 +21,7 @@ public class NavigationController {
 
         boolean tienePermiso;
 
-        logger.debug("Session '" + userSession.getId() + "' solicita permiso para '" + paginaDestino + "'");
+        logger.debug("Session '" + userSession.getId() + "' needs access to '" + paginaDestino + "'");
 
         List<UserRole> userListRoles = userSession.getUser().getRoles();
 
@@ -61,5 +61,6 @@ public class NavigationController {
                 return Constants.HOME_PAGE_PATH;
         }
     }
+
 
 }

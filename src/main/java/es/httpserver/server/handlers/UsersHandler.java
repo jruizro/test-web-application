@@ -72,8 +72,8 @@ public class UsersHandler extends HTTPCommonHandler {
             newUser.setRoles(listaDeRolesUsuario);
 
             if (getUsersDataController().getUser(newUser.getUsername()) != null) {
-                logger.error("ERROR: El usuario ya existe");
-                sendBadRequestResponse("ERROR: El usuario ya existe");
+                logger.error("ERROR: user already exists");
+                sendBadRequestResponse("ERROR: user already exists");
             } else {
                 getUsersDataController().addUser(newUser);
                 logger.debug("Added new User: " + getUsersDataController().getUser(newUser.getUsername()).toString());
@@ -81,8 +81,8 @@ public class UsersHandler extends HTTPCommonHandler {
             }
 
         } else {
-            logger.error("ERROR: Falta parametro obligatorio");
-            sendBadRequestResponse("ERROR: Falta parametro obligatorio");
+            logger.error("ERROR: Required parameter is missing");
+            sendBadRequestResponse("ERROR: Required parameter is missing");
         }
     }
 
@@ -115,12 +115,12 @@ public class UsersHandler extends HTTPCommonHandler {
                 IUser userUpdated = getUsersDataController().updateUser(userToUpdate);
                 sendRESTSuccessfulResponse(userUpdated);
             } else {
-                logger.error("ERROR: Falta parametro obligatorio");
-                sendBadRequestResponse("ERROR: Falta parametro obligatorio");
+                logger.error("ERROR: Required parameter is missing");
+                sendBadRequestResponse("ERROR: Required parameter is missing");
             }
 
         } else {
-            logger.error("ERROR: El usuario a actualizar NO existe");
+            logger.error("ERROR: User to upgrade does NOT exist");
             sendNotFoundResponse();
         }
 

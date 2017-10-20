@@ -1,13 +1,10 @@
 package es.httpserver.server.handlers;
 
 import es.httpserver.common.Constants;
-import es.httpserver.controllers.NavigationController;
-import es.httpserver.model.IWebSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Created by User: admin

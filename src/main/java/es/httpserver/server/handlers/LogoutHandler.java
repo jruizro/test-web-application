@@ -21,10 +21,10 @@ public class LogoutHandler extends HTTPCommonHandler {
 
         String sessionId = exchangeContext.getSessionCookie();
 
-        logger.debug("Solicitado el Logout de la session " + sessionId);
+        logger.debug("Requested Session Logout for " + sessionId);
         String usuarioDeSession = getSessionController().removeSession(sessionId);
 
-        sendSuccessfulResponse(generateHTMLPage(Constants.LOGIN_PAGE_PATH, "", "Logout OK para " + usuarioDeSession));
+        sendSuccessfulResponse(generateHTMLPage(Constants.LOGIN_PAGE_PATH, "", "Logout OK for " + usuarioDeSession));
     }
 
 }

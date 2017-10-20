@@ -12,6 +12,7 @@ public class Constants {
     public static final String PAGE_1_PATH = "/web/page_1.html";
     public static final String PAGE_2_PATH = "/web/page_2.html";
     public static final String PAGE_3_PATH = "/web/page_3.html";
+    public static final String ERROR_PAGE_PATH = "/web/error.html";
 
     public static final String PAGE_1_PARAMETER = "PAGE_1";
     public static final String PAGE_2_PARAMETER = "PAGE_2";

@@ -40,12 +40,12 @@ public class SessionController {
         try {
 
             ResourceBundle serverConfig = ResourceBundle.getBundle(Constants.SERVER_CONFIG_FILE);
-            logger.debug("Cargando configuración del servidor " + Constants.SERVER_CONFIG_FILE + ".properties");
+            logger.debug("Loading server configuration from " + Constants.SERVER_CONFIG_FILE + ".properties");
 
             sessionTimeout = Integer.parseInt(serverConfig.getString(Constants.PROPERTY_SESSION_TIMEOUT));
 
         } catch (Exception e) {
-            logger.error("ERROR al cargar el fichero de configuracion del Servidor: " + e.getMessage());
+            logger.error("ERROR loading server configuration: " + e.getMessage());
             e.printStackTrace(System.out);
         }
     }
@@ -56,7 +56,7 @@ public class SessionController {
 
     public IWebSession addSession(IWebSession infoDeSesion) {
         sessionsList.put(infoDeSesion.getId(), infoDeSesion);
-        logger.debug("Almacenada la sesion '" + infoDeSesion.getId() + "' del usuario '" + infoDeSesion.getUser().getUsername() + "'");
+        logger.debug("Stored session '" + infoDeSesion.getId() + "' from user '" + infoDeSesion.getUser().getUsername() + "'");
         return infoDeSesion;
     }
 
@@ -64,7 +64,7 @@ public class SessionController {
         IWebSession infoDeSesion = new WebSession(sessionId);
         infoDeSesion.setReferer(paginaSolicitada);
         sessionsList.put(sessionId, infoDeSesion);
-        logger.debug("Almacenada la sesion '" + infoDeSesion.getId() + "' para un usuario NO LOGADO -> " + paginaSolicitada);
+        logger.debug("Stored session '" + infoDeSesion.getId() + "' for NO LOGGED user -> " + paginaSolicitada);
         return infoDeSesion;
     }
 
@@ -72,7 +72,7 @@ public class SessionController {
 
         IWebSession sessionSinUser = sessionsList.get(sessionId);
         sessionSinUser.setUser(userYaLogado);
-        logger.debug("Session " + sessionId + " asignada al usuario " + userYaLogado.getUsername());
+        logger.debug("Session " + sessionId + " assigned to user " + userYaLogado.getUsername());
 
         return sessionSinUser;
     }
@@ -82,7 +82,7 @@ public class SessionController {
         String ususarioDeLaSession = "";
         if (sessionsList.containsKey(sessionId)) {
             ususarioDeLaSession = sessionsList.get(sessionId).getUser().getUsername();
-            logger.debug("Eliminando la sesion '" + sessionId + "' del usuario '" + ususarioDeLaSession + "'");
+            logger.debug("Removed session '" + sessionId + "' of user '" + ususarioDeLaSession + "'");
             sessionsList.remove(sessionId);
         }
         return ususarioDeLaSession;

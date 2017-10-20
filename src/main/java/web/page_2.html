@@ -1,17 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>LightWeight HTTPServer Login Page 2</title>
+    <title>LightWeight HTTPServer Page 2</title>
 </head>
 <body>
 <header>
-    <h1>LightWeight HTTPServer Login Page 2</h1>
+    <h1>LightWeight HTTPServer Page 2</h1>
 </header>
 
 <p>#$ERROR$#</p>
 
 <h2>Hello #$USERNAME$#</h2>
-
+<br>
+<form action="/web" method="get" enctype="application/x-www-form-urlencoded">
+    <div>
+        <input type="submit" value="Back to Home"/>
+    </div>
+</form>
+<br>
 <form action="/logout" method="post" enctype="application/x-www-form-urlencoded">
     <div>
         <input type="submit" value="Log out!"/>

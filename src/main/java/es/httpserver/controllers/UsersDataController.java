@@ -57,7 +57,7 @@ public class UsersDataController {
     }
 
     public IUser getUser(String username) {
-        logger.debug("Buscando info del Usuario: " + username);
+        logger.debug("Searching info for user: " + username);
         return listaUsuarios.getOrDefault(username, null);
     }
 
@@ -66,7 +66,7 @@ public class UsersDataController {
     }
 
     public void deleteAllUsers() {
-        logger.debug("Se van borrar " + listaUsuarios.size() + " usuarios");
+        logger.debug("Removed " + listaUsuarios.size() + " users");
         listaUsuarios = new HashMap<>();
     }
 
