@@ -2,6 +2,7 @@ package es.httpserver.server.handlers;
 
 import com.sun.net.httpserver.Headers;
 import es.httpserver.common.Constants;
+import es.httpserver.model.ContextPath;
 import es.httpserver.model.IUser;
 import es.httpserver.model.User;
 import es.httpserver.model.UserRole;
@@ -33,7 +34,7 @@ public class UsersHandler extends HTTPCommonHandler {
 
         logger.debug("UsersHandler - get -> Read User");
 
-        List<String> uriParameters = exchangeContext.getRequestUriPath(Constants.USERS_CONTEXTPATH);
+        List<String> uriParameters = exchangeContext.getRequestUriPath(ContextPath.USERS_WS.getStringPath());
         IUser userRequested = getUsersDataController().getUser(uriParameters.get(0));
 
         if (userRequested != null) {
@@ -58,13 +59,13 @@ public class UsersHandler extends HTTPCommonHandler {
         logger.debug("UsersHandler - post -> Create User");
         HashMap<String, String> bodyParameters = exchangeContext.getRequestBodyParameters();
 
-        if (bodyParameters.get("username") != null && bodyParameters.get("password") != null && bodyParameters.get("roles") != null) {
+        if (bodyParameters.get(Constants.REQ_PARAM_USERNAME) != null && bodyParameters.get(Constants.REQ_PARAM_PASSWORD) != null && bodyParameters.get(Constants.REQ_PARAM_ROLES) != null) {
             IUser newUser = new User();
-            newUser.setUsername(bodyParameters.get("username"));
-            newUser.setPassword(bodyParameters.get("password"));
+            newUser.setUsername(bodyParameters.get(Constants.REQ_PARAM_USERNAME));
+            newUser.setPassword(bodyParameters.get(Constants.REQ_PARAM_PASSWORD));
 
             List<UserRole> listaDeRolesUsuario = new Vector<>();
-            List<String> rolesEnString = splitFiledsWithDelimeter(bodyParameters.get("roles"), ",");
+            List<String> rolesEnString = splitFiledsWithDelimeter(bodyParameters.get(Constants.REQ_PARAM_ROLES), ",");
             for (String role: rolesEnString) {
                 UserRole.getFromString(role).ifPresent(listaDeRolesUsuario::add);
             }
@@ -96,16 +97,16 @@ public class UsersHandler extends HTTPCommonHandler {
     public void put() throws IOException {
         logger.debug("UsersHandler - update - Update User");
 
-        List<String> uriParameters = exchangeContext.getRequestUriPath(Constants.USERS_CONTEXTPATH);
+        List<String> uriParameters = exchangeContext.getRequestUriPath(ContextPath.USERS_WS.getStringPath());
 
         IUser userToUpdate = getUsersDataController().getUser(uriParameters.get(0));
         if (userToUpdate != null) {
 
             HashMap<String, String> bodyParameters = exchangeContext.getRequestBodyParameters();
-            if (bodyParameters.get("roles") != null) {
+            if (bodyParameters.get(Constants.REQ_PARAM_ROLES) != null) {
 
                 List<UserRole> listaDeRolesUsuario = new Vector<>();
-                List<String> rolesEnString = splitFiledsWithDelimeter(bodyParameters.get("roles"), ",");
+                List<String> rolesEnString = splitFiledsWithDelimeter(bodyParameters.get(Constants.REQ_PARAM_ROLES), ",");
                 for (String role: rolesEnString) {
                     UserRole.getFromString(role).ifPresent(listaDeRolesUsuario::add);
                 }
@@ -134,7 +135,7 @@ public class UsersHandler extends HTTPCommonHandler {
     public void delete() throws IOException {
         logger.debug("UsersHandler - delete -> Delete User");
 
-        List<String> uriParameters = exchangeContext.getRequestUriPath(Constants.USERS_CONTEXTPATH);
+        List<String> uriParameters = exchangeContext.getRequestUriPath(ContextPath.USERS_WS.getStringPath());
         IUser userDeleted = getUsersDataController().deleteUser(uriParameters.get(0));
 
         if (userDeleted != null) {

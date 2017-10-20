@@ -1,10 +1,9 @@
 package es.httpserver.server;
 
-import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 import es.httpserver.authentication.BasicAuthenticationChecker;
-import es.httpserver.common.Constants;
-import es.httpserver.server.handlers.*;
+import es.httpserver.controllers.ContextController;
+import es.httpserver.model.ContextPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,6 +27,7 @@ public class LightweightHTTPServer {
     // -> If this value is less than or equal to zero, then a system default value is used.
     private static int defaultBacklog = 0;
 
+
     public static void main(String[] args) throws IOException {
 
         logger.info("Starting LightweightHTTPServer... ");
@@ -44,14 +44,11 @@ public class LightweightHTTPServer {
         HttpServer lightweightHTTPServer = HttpServer.create(inetSocketAddress, defaultBacklog);
 
         // All requests received by the server for the path will be handled by calling the given handler object
-        lightweightHTTPServer.createContext(Constants.ROOT_CONTEXTPATH, new RootHandler());
-        lightweightHTTPServer.createContext(Constants.WEB_CONTEXTPATH, new WebHandler());
+        ContextController contextController = new ContextController(lightweightHTTPServer);
+        contextController.buildDefaultContexts();
 
-        lightweightHTTPServer.createContext(Constants.LOGIN_CONTEXTPATH, new LoginHandler());
-        lightweightHTTPServer.createContext(Constants.LOGOUT_CONTEXTPATH, new LogoutHandler());
-        // REST User Service
-        HttpContext userWSRESTContext = lightweightHTTPServer.createContext(Constants.USERS_CONTEXTPATH, new UsersHandler());
-        userWSRESTContext.setAuthenticator(new BasicAuthenticationChecker("users"));
+        // REST User Service uses Basic Authorization
+        contextController.addAuthenticationToContext(ContextPath.USERS_WS, new BasicAuthenticationChecker("users"));
 
         // All HTTP requests are handled in tasks given to the executor -> object that executes submitted Runnable tasks
         // newCachedThreadPool() -> Creates a thread pool that creates new threads as needed, but will reuse previously constructed threads when they are available.

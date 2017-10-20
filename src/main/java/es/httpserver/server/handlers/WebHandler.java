@@ -36,7 +36,7 @@ public class WebHandler extends HTTPCommonHandler {
             if (!getSessionController().isExpired(sessionId)) {
                 IWebSession session = getSessionController().getSession(sessionId);
                 if (navigationController.hasAccessToPage(session, paginaSolicitada)) {
-                    sendSuccessfulResponse(generateHTMLPage(getPagePath(paginaSolicitada), session.getUser().getUsername(), ""));
+                    sendSuccessfulResponse(generateHTMLPage(navigationController.getPagePath(paginaSolicitada), session.getUser().getUsername(), ""));
                 } else {
                     // Usuario sin permisos para acceder -> LOGIN again
                     // Para esa session marcamos como pagina futura la solicitada

@@ -4,7 +4,6 @@ import es.httpserver.authentication.BasicAuthenticationChecker;
 import es.httpserver.common.Constants;
 import es.httpserver.controllers.NavigationController;
 import es.httpserver.model.IWebSession;
-import es.httpserver.model.User;
 import es.httpserver.model.WebSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,8 +29,8 @@ public class LoginHandler extends HTTPCommonHandler {
 
         boolean isValidLogin = false;
 
-        String username = bodyParameters.get("username");
-        String password = bodyParameters.get("password");
+        String username = bodyParameters.get(Constants.REQ_PARAM_USERNAME);
+        String password = bodyParameters.get(Constants.REQ_PARAM_PASSWORD);
 
         if (username != null && password != null) {
             logger.debug("Validando credenciales para [" + username + " -> " + password + "]");
@@ -57,7 +56,7 @@ public class LoginHandler extends HTTPCommonHandler {
                     // Verificamos si tras el nuevo login tiene acceso a la pagina anteriormente solicitada
                     if (navigationController.hasAccessToPage(sessionUpdated, paginaSolicitada)) {
                         // Si ya hay una session anonima -> Update Session & acceso a pagina Solicitada
-                        sendSuccessfulResponse(generateHTMLPage(getPagePath(paginaSolicitada), username, ""));
+                        sendSuccessfulResponse(generateHTMLPage(navigationController.getPagePath(paginaSolicitada), username, ""));
                     } else {
                         // Si de nuevo NO tiene acceso a la pagina solicitada -> Home
                         sendSuccessfulResponse(generateHTMLPage(Constants.HOME_PAGE_PATH, username, "ERROR: No posee el rol necesario para accceder a " + paginaSolicitada));

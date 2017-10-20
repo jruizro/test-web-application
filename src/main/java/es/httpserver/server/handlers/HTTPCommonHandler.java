@@ -120,19 +120,7 @@ public class HTTPCommonHandler implements HttpHandler {
     }
 
 
-    protected String getPagePath(String paginaSolicitada) {
 
-        switch (paginaSolicitada) {
-            case Constants.PAGE_1_PARAMETER:
-                return Constants.PAGE_1_PATH;
-            case Constants.PAGE_2_PARAMETER:
-                return Constants.PAGE_2_PATH;
-            case Constants.PAGE_3_PARAMETER:
-                return Constants.PAGE_3_PATH;
-            default:
-                return Constants.HOME_PAGE_PATH;
-        }
-    }
 
 
 }

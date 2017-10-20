@@ -6,7 +6,6 @@ import javax.json.JsonObjectBuilder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -42,7 +41,7 @@ public class User implements IUser {
         this.roles = roles;
     }
 
-    @Override @XmlTransient public boolean isCorrectPassword(String password) {
+    @Override public boolean isCorrectPassword(String password) {
         return this.password.equals(password);
     }
 
