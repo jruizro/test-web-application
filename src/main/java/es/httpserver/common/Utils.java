@@ -11,7 +11,7 @@ import java.util.Vector;
  */
 public class Utils {
 
-    public static List<String> separaCamposPorDelimitador(String listaConDelimitadores, String delimitador) {
+    public static List<String> splitFiledsWithDelimeter(String listaConDelimitadores, String delimitador) {
 
         List<String> listaSeparadaSinDelimitadores = new Vector<>();
         StringTokenizer serviceTokenizer = new StringTokenizer(listaConDelimitadores, delimitador);

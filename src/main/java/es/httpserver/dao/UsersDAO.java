@@ -1,7 +1,7 @@
 package es.httpserver.dao;
 
 import es.httpserver.common.Constants;
-import es.httpserver.common.Utils;
+;
 import es.httpserver.model.IUser;
 import es.httpserver.model.User;
 import es.httpserver.model.UserRole;
@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
+
+import static es.httpserver.common.Utils.splitFiledsWithDelimeter;
 
 /**
  * Lee la información de los usuarios
@@ -34,7 +36,7 @@ public class UsersDAO {
 
             if (usersRolesConfig != null) {
 
-                List<String> listaDeUsuarios = Utils.separaCamposPorDelimitador(usersRolesConfig.getString(Constants.PROPERTY_USERS_LIST), ",");
+                List<String> listaDeUsuarios = splitFiledsWithDelimeter(usersRolesConfig.getString(Constants.PROPERTY_USERS_LIST), ",");
 
                 for (String nombreUsuario : listaDeUsuarios) {
                     IUser usuario = new User();
@@ -42,7 +44,7 @@ public class UsersDAO {
                     usuario.setPassword(usersRolesConfig.getString(nombreUsuario + Constants.PROPERTY_USER_PASS));
                     List<UserRole> listaDeRolesUsuario = new Vector<>();
 
-                    List<String> rolesEnString = Utils.separaCamposPorDelimitador(usersRolesConfig.getString(nombreUsuario + Constants.PROPERTY_USER_ROLE), ",");
+                    List<String> rolesEnString = splitFiledsWithDelimeter(usersRolesConfig.getString(nombreUsuario + Constants.PROPERTY_USER_ROLE), ",");
                     for (String role: rolesEnString) {
                         UserRole.getFromString(role).ifPresent(listaDeRolesUsuario::add);
                     }

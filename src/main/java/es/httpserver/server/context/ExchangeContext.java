@@ -3,7 +3,6 @@ package es.httpserver.server.context;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import es.httpserver.common.Constants;
-import es.httpserver.common.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,6 +11,8 @@ import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static es.httpserver.common.Utils.splitFiledsWithDelimeter;
 
 /**
  * Created by User: admin
@@ -31,7 +32,7 @@ public class ExchangeContext implements IExchangeContext {
 
         String queryRequestPath = httpExchange.getRequestURI().getPath() != null ? httpExchange.getRequestURI().getPath() : "";
 
-        List<String> getParams = Utils.separaCamposPorDelimitador(queryRequestPath, "/");
+        List<String> getParams = splitFiledsWithDelimeter(queryRequestPath, "/");
 
         return getParams.stream().filter(parametro -> !rootPath.contains(parametro)).collect(Collectors.toList());
 

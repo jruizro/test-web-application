@@ -2,7 +2,6 @@ package es.httpserver.server.handlers;
 
 import com.sun.net.httpserver.Headers;
 import es.httpserver.common.Constants;
-import es.httpserver.common.Utils;
 import es.httpserver.model.IUser;
 import es.httpserver.model.User;
 import es.httpserver.model.UserRole;
@@ -13,6 +12,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+
+import static es.httpserver.common.Utils.splitFiledsWithDelimeter;
 
 /**
  * Created by User: admin
@@ -63,7 +64,7 @@ public class UsersHandler extends HTTPCommonHandler {
             newUser.setPassword(bodyParameters.get("password"));
 
             List<UserRole> listaDeRolesUsuario = new Vector<>();
-            List<String> rolesEnString = Utils.separaCamposPorDelimitador(bodyParameters.get("roles"), ",");
+            List<String> rolesEnString = splitFiledsWithDelimeter(bodyParameters.get("roles"), ",");
             for (String role: rolesEnString) {
                 UserRole.getFromString(role).ifPresent(listaDeRolesUsuario::add);
             }
@@ -104,7 +105,7 @@ public class UsersHandler extends HTTPCommonHandler {
             if (bodyParameters.get("roles") != null) {
 
                 List<UserRole> listaDeRolesUsuario = new Vector<>();
-                List<String> rolesEnString = Utils.separaCamposPorDelimitador(bodyParameters.get("roles"), ",");
+                List<String> rolesEnString = splitFiledsWithDelimeter(bodyParameters.get("roles"), ",");
                 for (String role: rolesEnString) {
                     UserRole.getFromString(role).ifPresent(listaDeRolesUsuario::add);
                 }
