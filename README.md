@@ -1,7 +1,7 @@
 # Lightweight HTTP Server
 The **Lightweight HTTPServer** is an application server building without frameworks or J2EE Servlet that implements:
 - Login & pages navigation with user-role access 
-- REST WebService to READ, ADD, DELETE and UPDATE Users and roles
+- REST WebService to READ, ADD, DELETE and UPDATE Users and their roles
 
 # Getting Started
 
@@ -53,13 +53,18 @@ page3user.pass=12345
 noadmin.role=PAGE_1,PAGE_2,PAGE_3
 noadmin.pass=noadmin
 
+Configuration of Server properties like 'Web Session Time Out' is defined in `serverconfig.properties` file at `/resources` folder.
+ Here is actual configuration
+
+http.session.timeout=30000
+
 ## Configuration
 
 The **Lightweight HTTPServer** manages contexts:
     * `/` context for the web page navigation
     * `/users` context for the REST user resources
 
-Both contexts needs permisions to access:
+Both contexts needs user permisions to access:
     * Web Navigation has a `Login form`: user and password 
     * REST WebService with `HTTP Basic Authentication`: user and password
 
@@ -211,3 +216,30 @@ REST Web Service is configured to response in multiple formats according `Accept
  * `text/html` or `text/plain` then response will be delivered in Plain Text format
 default format is Plain Text
 
+
+## Design considerations
+
+The core pattern for the application is a [Model-View-Controller Pattern](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) with the views as static resources (HTML pages). Model is represented with bussiness POJO objects that defines domain model like `User`, `UserRole`, `WebSession`. Controllers are responsible of apply the bussiness logic defined againts model and transfer changes to the View, in this implementation, `HTTPHandlers` realizes this functionality 
+
+There are other Controllers in application, but do not refer to the MVC pattern:
+
+ * `NavigationController`: controls navigation throught web pages
+ * `ContextController`: builds all HTTP contexts that server is going to handle
+ * `SessionController`: controls all web session registered in application
+ * `UserDataController`: control all Users registered in application
+ 
+Others basic patterns applied:
+
+ * [Data Access Object (DAO)](https://en.wikipedia.org/wiki/Data_access_object) to abstract and encapsulate all access to the data source, in this case, `UsersDAO` encapsulate access to Users info resource. The DAO manages the connection with the data source to obtain and store data.
+ * [Factory](https://en.wikipedia.org/wiki/Factory_method_pattern): this creational pattern is implemented in `FactoryHandler` to generate all server handlers according to context Path passed 
+ * [Singleton](https://en.wikipedia.org/wiki/Singleton_pattern): It´s necessary to have one centralized point that controls all operations against session and users, to avoid conflicts in parallel operations
+
+It´s also remarkable [Inheritance](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)) of all specific HTTPHandlers from `HTTPCommonHandler` class that had all common methods to response HTTP Status and render responses.
+
+## Tests
+
+There are two types of testing implementations:
+
+ * **Unit Testing**: Unit testing have been implemented only againts controllers, because it where bussiness logic applies 
+ * **Web Aceptance Test**: Implemented with Selenium WebDriver simulates web page navigation flow for Admin and role users throught the Login Web app
+ * **REST Aceptance Test**: Implemented with HTTPClient simulates calls to all Users REST API (GET, POST, PUT, DELETE)
